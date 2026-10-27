@@ -1,0 +1,2491 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#bfe6ff">
+<title>단어 연습장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Jua&family=Fredoka:wght@500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@twemoji/api@15.1.0/dist/twemoji.min.js" crossorigin="anonymous"></script>
+<style>
+:root{
+  --sky1:#b9e3ff; --sky2:#e9f7ff; --ink:#4b3f63; --ink2:#7a6f8f;
+  --pink:#ff8fb8; --pink2:#ffe0ec; --yellow:#ffd96a; --yellow2:#fff4cc;
+  --mint:#6fd6b4; --mint2:#dcf8ef; --blue:#5fb0ef; --blue2:#dff0ff;
+  --card:#ffffff; --line:#e7eef7;
+  --shadow:0 6px 0 rgba(95,176,239,.22),0 14px 30px rgba(70,130,190,.16);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{
+  font-family:'Jua',system-ui,sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,var(--sky1) 0%,#d3eeff 50%,var(--sky2) 100%) fixed;
+  overflow-x:hidden;
+}
+button{font-family:inherit;color:inherit;border:0;cursor:pointer;background:none}
+.en{font-family:'Fredoka','Jua',sans-serif}
+img.emoji{height:1em;width:1em;margin:0 .04em;vertical-align:-.12em}
+.duo{display:inline-flex;align-items:center;gap:.02em;font-size:.66em;line-height:1;vertical-align:middle;white-space:nowrap}
+.duo img.emoji{margin:0}
+
+/* ===== sky ===== */
+#sky{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.cloud{position:absolute;left:0;height:44px;background:#fff;border-radius:60px;
+  box-shadow:0 6px 0 rgba(255,255,255,.5);animation:drift linear infinite}
+.cloud::before,.cloud::after{content:'';position:absolute;background:#fff;border-radius:50%}
+.cloud::before{width:52%;height:150%;left:14%;top:-62%}
+.cloud::after{width:40%;height:120%;right:12%;top:-42%}
+.cloud i{position:absolute;z-index:2;top:46%;left:40%;width:5px;height:7px;border-radius:50%;background:#7b6c8f;
+  box-shadow:16px 0 0 #7b6c8f}
+.cloud b{position:absolute;z-index:2;top:62%;left:32%;width:9px;height:5px;border-radius:50%;background:#ffc3d8;
+  box-shadow:31px 0 0 #ffc3d8}
+@keyframes drift{from{transform:translateX(-260px)}to{transform:translateX(calc(100vw + 60px))}}
+.sparkle{position:absolute;color:#fff;font-size:14px;animation:twinkle 3s ease-in-out infinite;opacity:.8}
+@keyframes twinkle{0%,100%{opacity:.2;transform:scale(.7)}50%{opacity:1;transform:scale(1.1)}}
+
+/* ===== layout ===== */
+#app{position:relative;z-index:1;max-width:780px;margin:0 auto;padding:16px 16px 60px}
+.topbar{display:flex;align-items:center;gap:10px;margin:4px 0 14px}
+.back{background:#fff;border-radius:999px;padding:9px 16px;font-size:16px;box-shadow:var(--shadow)}
+.back:active{transform:translateY(3px)}
+.topbar .t{flex:1;font-size:22px;text-align:center}
+.topbar .r{min-width:70px;text-align:right;font-size:19px;color:var(--ink2)}
+
+.panel{background:rgba(255,255,255,.92);border-radius:28px;padding:18px;box-shadow:var(--shadow);margin:14px 0;border:3px solid #fff}
+h2{font-size:21px;margin:26px 4px 10px;font-weight:400}
+.muted{color:var(--ink2)}
+
+/* hero */
+.hero{display:flex;align-items:flex-end;gap:6px;margin-top:6px}
+.catwrap{width:150px;flex:none}
+.catwrap svg{width:100%;display:block}
+.bubble{position:relative;background:#fff;border-radius:24px;padding:14px 16px;font-size:17px;line-height:1.45;
+  box-shadow:var(--shadow);margin-bottom:48px;flex:1}
+.bubble::after{content:'';position:absolute;left:-12px;bottom:18px;border:10px solid transparent;border-right:14px solid #fff;border-left:0}
+.title{font-size:34px;text-align:center;margin:8px 0 2px;font-weight:400;letter-spacing:1px;
+  color:#fff;text-shadow:0 3px 0 #5fb0ef,0 6px 14px rgba(60,120,190,.35)}
+.title .en{font-weight:700}
+.subtitle{text-align:center;color:#5a7fa6;font-size:15px;margin-bottom:6px}
+
+/* plan */
+.plan{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.plan div{background:var(--blue2);border-radius:18px;padding:10px 6px;text-align:center;font-size:14px}
+.plan b{display:block;font-size:22px;font-weight:400;color:#2f86cc}
+.plan-note{font-size:14px;line-height:1.6;color:var(--ink2);margin-top:10px}
+
+.today{display:flex;align-items:center;gap:12px}
+.today .ic{font-size:44px}
+.today .tx{flex:1;font-size:15px;line-height:1.4}
+.today .tx b{font-size:19px;font-weight:400;display:block}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:999px;padding:12px 20px;font-size:17px;
+  background:var(--pink);color:#fff;box-shadow:0 5px 0 #e56f9b;transition:transform .08s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #e56f9b}
+.btn.blue{background:var(--blue);box-shadow:0 5px 0 #3f8fcf}
+.btn.mint{background:var(--mint);box-shadow:0 5px 0 #4bb593}
+.btn.yellow{background:var(--yellow);color:#6b5200;box-shadow:0 5px 0 #e3b941}
+.btn.white{background:#fff;color:var(--ink);box-shadow:0 5px 0 #d5e3f1}
+.btn.sm{padding:9px 14px;font-size:15px}
+
+.bar{height:14px;background:#eef4fb;border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,#8fd3ff,#ff9cc4);border-radius:99px;transition:width .4s}
+.stat{display:flex;justify-content:space-between;font-size:15px;margin-bottom:8px}
+
+/* weeks */
+.weeks{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+.wk{background:#fff;border-radius:24px;padding:14px;text-align:left;box-shadow:var(--shadow);position:relative;transition:transform .1s;border:3px solid #fff}
+.wk:active{transform:scale(.97)}
+.wk.done{border-color:#ffd96a}
+.wk .n{font-size:14px;color:#3f8fcf}
+.wk .ic{font-size:34px;margin:4px 0}
+.wk .th{font-size:15px;line-height:1.3;min-height:40px}
+.wk .rg{font-size:12px;color:var(--ink2);margin:4px 0 8px}
+.wk .bar{height:9px}
+.wk .crown{position:absolute;right:12px;top:10px;font-size:20px}
+
+/* days */
+.days{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.day{background:#fff;border-radius:22px;padding:14px;text-align:left;box-shadow:var(--shadow);border:3px solid #fff}
+.day.done{border-color:var(--mint)}
+.day .dn{font-size:19px}
+.day .dr{font-size:13px;color:var(--ink2)}
+.day .pv{font-size:24px;margin:8px 0;letter-spacing:2px}
+.day .ck{font-size:13px;color:#3aa67f}
+.day.review{background:var(--yellow2)}
+.day.rest{background:var(--pink2)}
+
+/* modes */
+.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mode{border-radius:26px;padding:18px 12px;text-align:center;box-shadow:var(--shadow);background:#fff;border:3px solid #fff}
+.mode .ic{font-size:44px}
+.mode .mt{font-size:19px;margin-top:4px}
+.mode .md{font-size:13px;color:var(--ink2);margin-top:3px}
+.mode .st{margin-top:6px;font-size:15px;letter-spacing:2px}
+.mode.m1{background:linear-gradient(180deg,#fff,#e2f2ff)}
+.mode.m2{background:linear-gradient(180deg,#fff,#ffe6f0)}
+.mode.m3{background:linear-gradient(180deg,#fff,#dcf8ef)}
+.mode.m4{background:linear-gradient(180deg,#fff,#fff3cc)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:#fff;border-radius:999px;padding:6px 11px;font-size:14px;border:2px solid var(--line)}
+.chip.k{border-color:var(--mint);background:var(--mint2)}
+
+/* flash card */
+.dots{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:6px 0}
+.dots i{width:9px;height:9px;border-radius:50%;background:#fff;opacity:.7}
+.dots i.on{background:var(--pink);opacity:1;transform:scale(1.25)}
+.dots i.k{background:var(--mint);opacity:1}
+.flipbox{perspective:1100px;width:min(360px,100%);height:380px;margin:8px auto 14px;cursor:pointer}
+.flipin{position:relative;width:100%;height:100%;transition:transform .55s cubic-bezier(.3,1.4,.5,1);transform-style:preserve-3d}
+.flipbox.on .flipin{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:36px;background:#fff;
+  box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;border:5px solid #fff;text-align:center}
+.face.f{background:radial-gradient(circle at 50% 35%,#fffdf5 0%,#fff 60%)}
+.face.b{transform:rotateY(180deg);background:radial-gradient(circle at 50% 30%,#fff6fa 0%,#fff 65%)}
+.pic{font-size:118px;line-height:1;filter:drop-shadow(0 8px 10px rgba(0,0,0,.08));animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.word{font-size:46px;font-weight:700;margin-top:18px;color:#3f6fae;word-break:break-word;line-height:1.1}
+.word.long{font-size:34px}
+.hint{font-size:14px;color:#a7a0b8;margin-top:12px}
+.ko{font-size:36px;margin-top:6px;line-height:1.25;word-break:keep-all}
+.pos{display:inline-block;margin-top:10px;background:var(--yellow2);color:#9a7a10;border-radius:99px;padding:4px 12px;font-size:14px}
+.small-en{font-size:22px;color:#3f6fae;margin-top:10px;font-weight:600}
+.pic.sm{font-size:64px;animation:none}
+.ctrl{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:10px 0}
+.round{width:54px;height:54px;border-radius:50%;background:#fff;font-size:22px;box-shadow:var(--shadow)}
+.round:active{transform:translateY(3px)}
+.kbadge{display:inline-block;margin-left:6px;background:var(--mint2);color:#2e8f6c;border-radius:99px;padding:2px 10px;font-size:13px}
+
+/* quiz */
+.qcard{background:#fff;border-radius:34px;box-shadow:var(--shadow);padding:22px;text-align:center;border:5px solid #fff;margin:6px 0 16px;position:relative}
+.qcard .pic{font-size:120px}
+.qcard .qpic{font-size:150px;margin:10px 0 6px}
+.qko{font-size:38px;margin-top:12px;line-height:1.25;word-break:keep-all}
+.qprompt{font-size:21px;color:var(--ink2);margin-bottom:8px}
+.speakbig{width:130px;height:130px;border-radius:50%;background:linear-gradient(180deg,#ffd3e5,#ff9cc4);font-size:60px;box-shadow:0 7px 0 #e982ab;margin:10px auto}
+.speakbig:active{transform:translateY(5px);box-shadow:0 2px 0 #e982ab}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ch{background:#fff;border-radius:26px;padding:18px 8px;font-size:32px;word-break:break-word;line-height:1.15;box-shadow:0 5px 0 #d5e3f1,0 10px 20px rgba(70,130,190,.12);border:3px solid #fff;min-height:100px;transition:transform .08s}
+.ch:active{transform:translateY(3px)}
+.ch .en{font-weight:600;color:#3f6fae}
+.ch .e{font-size:56px;display:block}
+.ch.long{font-size:25px}
+.ch.picch{min-height:150px;display:flex;align-items:center;justify-content:center}
+.ch.picch .e{font-size:96px;line-height:1}
+.ch .k{font-size:23px;display:block;margin-top:6px;word-break:keep-all}
+.ch.right{background:var(--mint2);border-color:var(--mint);animation:pop .4s}
+.ch.wrong{background:#ffe6ea;border-color:#ff9aa8;animation:shake .4s}
+.ch:disabled{cursor:default}
+@keyframes pop{50%{transform:scale(1.08)}}
+@keyframes shake{20%,60%{transform:translateX(-7px)}40%,80%{transform:translateX(7px)}}
+.qhead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.qhead .bar{flex:1}
+.minicat{width:64px;flex:none}
+.minicat svg{width:100%;display:block}
+.score{font-size:22px;min-width:52px;text-align:right}
+
+/* match */
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tile{min-width:0;overflow:hidden;background:#fff;border-radius:22px;min-height:110px;padding:8px;box-shadow:0 5px 0 #d5e3f1;border:3px solid #fff;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:transform .12s,opacity .3s}
+.tile .en{display:block;max-width:100%;white-space:normal;word-break:keep-all;overflow-wrap:normal;line-height:1.15;font-size:25px;font-weight:600;color:#3f6fae}
+.tile .e{font-size:62px;line-height:1}
+.tile .k{font-size:17px;color:var(--ink2);margin-top:2px}
+.tile.sel{border-color:var(--pink);background:var(--pink2);transform:scale(1.04)}
+.tile.ok{border-color:var(--mint);background:var(--mint2);opacity:.55;transform:scale(.94)}
+.tile.no{animation:shake .4s;border-color:#ff9aa8}
+
+/* result */
+.result{text-align:center}
+.result .catwrap{margin:0 auto;width:170px}
+.stars{font-size:46px;letter-spacing:6px;margin:6px 0}
+.result h3{font-size:28px;font-weight:400;margin:6px 0}
+.wrongs{text-align:left;margin-top:12px}
+.wl{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:16px;background:#fff7fa;margin:6px 0}
+.wl .e{font-size:36px}
+.wl .en{font-weight:600;color:#3f6fae;font-size:26px}
+.wl .k{color:var(--ink2);font-size:20px}
+
+/* list */
+table.wt{width:100%;border-collapse:separate;border-spacing:0 6px;font-size:15px}
+.wt td{background:#fff;padding:9px 8px}
+.wt td:first-child{border-radius:14px 0 0 14px;color:var(--ink2);width:46px;text-align:center}
+.wt td:last-child{border-radius:0 14px 14px 0;text-align:center;width:56px}
+.wt .e{font-size:24px;width:40px;text-align:center}
+.wt .en{font-weight:600;color:#3f6fae;cursor:pointer}
+.wt .p{font-size:12px;color:#9a7a10}
+.okbtn{width:38px;height:38px;border-radius:50%;border:3px dashed #d0dbe8;font-size:18px;color:#c4cfdc;background:#fff}
+.okbtn.on{border:3px solid var(--mint);background:var(--mint2);color:#2e8f6c}
+
+.foot{text-align:center;color:#6d8fb3;font-size:13px;margin-top:30px;line-height:1.7}
+.link{color:#6d8fb3;text-decoration:underline;font-size:13px}
+
+/* login */
+.login{max-width:420px;margin:10px auto 0;text-align:center}
+.login .catwrap{width:150px;margin:0 auto}
+.login .title{margin-top:4px}
+.lform{text-align:left;display:grid;gap:8px;margin-top:6px}
+.lform label{font-size:16px;margin-top:6px}
+.lform input{width:100%;min-width:0;font-family:inherit;font-size:20px;padding:13px 16px;border-radius:18px;border:3px solid var(--line);background:#fff;color:var(--ink);outline:none}
+.lform input:focus{border-color:var(--blue)}
+.lform .btn{margin-top:12px;font-size:20px;padding:14px}
+.lmsg{min-height:22px;color:#e2557f;font-size:16px;text-align:center;margin-top:4px}
+.lnote{background:var(--yellow2);border-radius:16px;padding:12px;font-size:15px;line-height:1.5;color:#7a5d00}
+.preview{font-size:13px;color:#6d8fb3;margin-top:14px;line-height:1.6}
+/* user bar & sync */
+.userbar{display:flex;align-items:center;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.uchip{background:#fff;border-radius:999px;padding:7px 13px;font-size:15px;box-shadow:0 3px 0 #d5e3f1}
+.uchip.sync{color:#3aa67f}
+.uchip.sync.saving{color:#3f8fcf}
+.uchip.sync.err{color:#e2557f;cursor:pointer}
+.title .who{color:#fff}
+/* stats */
+.plan.st b{color:#ff7fab}
+.streak{margin-top:10px;font-size:17px;text-align:center}
+.week7{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;align-items:end;height:120px;margin-top:12px;padding:0 2px}
+.week7 .c{display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;gap:4px}
+.week7 .n{font-size:14px;color:var(--ink2)}
+.week7 .bb{width:70%;max-width:34px;border-radius:10px 10px 4px 4px;background:linear-gradient(180deg,#ffb3cf,#8fd3ff);min-height:4px}
+.week7 .c.today .bb{background:linear-gradient(180deg,#ff7fab,#5fb0ef)}
+.week7 .d{font-size:13px;color:var(--ink2)}
+.week7 .c.today .d{color:#ff7fab}
+.kinds{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+/* copyright */
+.copy{position:relative;z-index:1;text-align:center;padding:4px 16px 28px}
+.copy img{display:block;margin:0 auto;width:451px;max-width:100%;height:auto;border-radius:12px}
+
+/* confetti */
+.cf{position:fixed;top:-40px;z-index:50;pointer-events:none;font-size:26px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg);opacity:.6}}
+
+/* cat */
+.cat .blink{animation:blink 4s infinite;transform-origin:center 92px;transform-box:view-box}
+@keyframes blink{0%,46%,50%,100%{transform:scaleY(1)}48%{transform:scaleY(.1)}}
+.cat .paw{animation:wave 1.4s ease-in-out infinite;transform-origin:150px 168px;transform-box:view-box}
+@keyframes wave{0%,100%{transform:rotate(0)}50%{transform:rotate(-24deg)}}
+.cat .tailw{animation:tail 2s ease-in-out infinite;transform-origin:150px 170px;transform-box:view-box}
+@keyframes tail{0%,100%{transform:rotate(0)}50%{transform:rotate(12deg)}}
+.hop{animation:hop .5s}
+@keyframes hop{40%{transform:translateY(-14px)}}
+
+@media (max-width:480px){
+  .title{font-size:28px}
+  .catwrap{width:118px}
+  .bubble{font-size:15px;margin-bottom:36px}
+  .word{font-size:40px}
+  .flipbox{height:350px}
+  .ch{font-size:27px;padding:16px 6px}
+  .ch.long{font-size:21px}
+  .ch.picch{min-height:132px}
+  .ch.picch .e{font-size:84px}
+  .qko{font-size:32px}
+  .qcard .pic{font-size:104px}
+  .qcard .qpic{font-size:130px}
+  .mgrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+  .tile{min-height:86px}
+  .tile .en{font-size:26px}
+  .tile .e{font-size:50px}
+}
+</style>
+</head>
+<body>
+<div id="sky"></div>
+<main id="app"></main>
+<footer class="copy"><img alt="Copyright © 2026 은하엄마. All rights reserved." src="data:image/png;base64,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"></footer>
+
+<script src="config.js"></script>
+<script>
+/* ============================================================
+   필수 영어 단어 1,500 (순위 순서 · 100개씩 15그룹)
+   형식: 영어|한글 뜻|품사(n 명사, v 동사, a 형용사, d 부사, f 기능어)|그림
+   ============================================================ */
+const RAW = `father|아빠|n|👨‍🍼
+mother|엄마|n|👩‍🍼
+brother|오빠/남동생|n|👬
+sister|언니/여동생|n|👭
+family|가족|n|👨‍👩‍👧‍👦
+eye|(얼굴의) 눈|n|👁️
+nose|코|n|👃
+mouth|입|n|👄
+ear|귀|n|👂
+head|머리|n|💆
+one|하나|n|1️⃣
+red|빨간|a|🔴
+two|둘|n|2️⃣
+three|셋|n|3️⃣
+yellow|노란|a|🟡
+blue|파란|a|🔵
+four|넷|n|4️⃣
+five|다섯|n|5️⃣
+purple|보라색|n|🟣
+green|초록색|n|🟢
+six|여섯|n|6️⃣
+apple|사과|n|🍎
+seven|일곱|n|7️⃣
+eight|여덟|n|8️⃣
+orange|오렌지|n|🍊
+nine|아홉|n|9️⃣
+strawberry|딸기|n|🍓
+banana|바나나|n|🍌
+ten|열(숫자 10)|n|🔟
+grape|포도|n|🍇
+dog|개|n|🐕
+hello|안녕|f|👋
+cat|고양이|n|🐱
+goodbye|안녕히 가세요|f|👋+🚶
+pig|돼지|n|🐖
+chicken|닭|n|🐔
+sorry|미안한|a|🙇
+cow|소|n|🐄
+please|제발|d|🙏
+desk|책상|n|📚+🪑
+book|책|n|📕
+eraser|지우개|n|✏️+🧽
+backpack|책가방|n|🎒
+morning|아침|n|🌅
+afternoon|오후|n|🌤️
+evening|저녁|n|🌆
+day|낮/날|n|☀️+📅
+night|밤|n|🌙
+boy|남자아이|n|👦
+girl|여자아이|n|👧
+baby|아기|n|👶
+kid|아이|n|🧒
+child|어린이|n|👧+👦
+toy|장난감|n|🧸
+doll|인형|n|🪆
+ball|공|n|🥎
+breakfast|아침식사|n|🥞
+lunch|점심|n|🍱
+dinner|저녁식사|n|🍽️+🌙
+dessert|디저트|n|🍰
+snack|간식|n|🍿
+skirt|치마|n|👗
+shirt|셔츠|n|👕
+shoe|신발|n|👟
+pants|바지|n|👖
+bag|가방|n|👜
+house|집|n|🏠
+bed|침대|n|🛏️
+table|식탁|n|🪑+🍽️
+chair|의자|n|🪑
+camera|카메라|n|📷
+car|자동차|n|🚗
+bus|버스|n|🚌
+bike|자전거|n|🚲
+train|기차|n|🚂
+airplane|비행기|n|✈️
+eat|먹다|v|🍚+🥢
+read|읽다|v|📖
+drink|마시다|v|🥤
+walk|걷다|v|🚶
+run|달리다|v|🏃
+happy|행복한|a|😊
+sad|슬픈|a|😢
+hungry|배고픈|a|🤤
+angry|화난|a|😠
+sleepy|졸린|a|😪
+hand|손|n|✋
+arm|팔|n|💪
+leg|(몸의) 다리|n|🦵
+foot|발|n|🦶
+again|다시|d|🔁
+understand|이해하다|v|💡+👍
+help|돕다|v|🤝
+glue|(붙이는) 풀|n|🧴
+more|더|d|➕
+ruler|자|n|📏
+paper|종이|n|📄
+together|함께|d|🤗
+milk|우유|n|🥛
+bread|빵|n|🍞
+water|물|n|💧
+picture|그림|n|🖼️
+box|상자|n|📦
+see|보다|v|👀
+hear|듣다|v|👂+🔔
+touch|만지다|v|👆
+smell|냄새 맡다|v|👃+🌸
+black|검은|a|⚫
+white|흰|a|⚪
+brown|갈색|n|🟤
+gray|회색|n|🩶
+crayon|크레용|n|🖍️
+pink|분홍색|n|🩷
+story|이야기|n|📖+🧚
+meal|식사|n|🍛
+name|이름|n|🙋+🏷️
+song|노래|n|🎵
+lamp|램프|n|🛋️+💡
+big|큰|a|🐘+⬆️
+small|작은|a|🐭
+good|좋은|a|👍
+bad|나쁜|a|👎
+tall|키 큰|a|🦒+⬆️
+bird|새|n|🐦
+frog|개구리|n|🐸
+duck|오리|n|🦆
+pet|애완동물|n|🐹
+time|시간|n|⏰
+test|시험|n|📝
+grade|학년/점수|n|📝+🅰️
+bell|벨/종|n|🔔
+prize|상|n|🏆
+sock|양말|n|🧦
+glove|장갑|n|🧤
+cap|모자|n|🧢
+hat|챙 있는 모자|n|👒
+mirror|거울|n|🪞
+clock|시계|n|🕰️
+umbrella|우산|n|☂️
+finger|손가락|n|☝️
+blanket|담요|n|🛌
+like|좋아하다|v|👍+❤️
+look|쳐다보다/바라보다|v|👀+👉
+go|가다|v|➡️
+come|오다|v|🚶+⬅️
+nap|낮잠|n|😴
+sleep|자다|v|💤
+wait|기다리다|v|⏳
+homework|숙제|n|📝+🏠
+call|부르다/전화하다|v|📞
+activity|활동|n|🤸
+notebook|공책|n|📓
+home|집/가정|n|🏡
+school|학교|n|🏫
+store|가게|n|🏪
+town|마을|n|🏘️
+playground|놀이터|n|🛝
+cry|울다|v|😭
+open|열다|v|🔓
+close|닫다|v|🔒
+tale|옛날이야기/동화|n|🏰+📖
+use|사용하다|v|🛠️
+room|방|n|🚪+🛋️
+window|창문|n|🪟
+roof|지붕|n|🏠+⬆️
+door|문|n|🚪
+birthday|생일|n|🎂
+party|파티|n|🎉
+picnic|소풍|n|🧺
+balloon|풍선|n|🎈
+gift|선물|n|🎁
+thirsty|목마른|a|🥵+💧
+yummy|냠냠 맛있는|a|😋
+funny|재미있는|a|😆
+busy|바쁜|a|🏃+⏰
+basket|바구니|n|🧺+🍎
+map|지도|n|🗺️
+bench|벤치|n|🌳+🪑
+pool|수영장|n|💧+🟦
+tree|나무|n|🌳
+grass|풀/잔디|n|🌱
+flower|꽃|n|🌸
+leaf|잎|n|🍃
+soil|흙|n|🟫+🪱
+land|땅|n|🏞️
+gate|대문/출입문|n|🚪+🧱
+garden|정원|n|🌷
+bear|곰|n|🐻
+tiger|호랑이|n|🐯
+lion|사자|n|🦁
+elephant|코끼리|n|🐘
+fox|여우|n|🦊
+fork|포크|n|🍴
+spoon|숟가락|n|🥄
+knife|칼|n|🔪
+dish|접시|n|🍽️
+long|긴|a|🐍+↔️
+new|새로운|a|🆕
+short|짧은|a|🤏
+delicious|정말 맛있는|a|🍰+😍
+colorful|색깔이 화려한|a|🎨+🌈
+make|만들다|v|🛠️+🧸
+give|주다|v|🎁+🤲
+love|사랑하다|v|💕
+cookie|쿠키|n|🍪
+lick|핥다|v|🍭+👅
+smile|미소 짓다|v|😊+✨
+cake|케이크|n|🎂+🍰
+kitchen|부엌|n|🍳
+cheese|치즈|n|🧀
+refrigerator|냉장고|n|🧊+🥛
+jar|항아리|n|🫙
+juice|주스|n|🧃
+oven|오븐|n|🔥+🍞
+soup|수프|n|🍲+🥄
+bowl|그릇|n|🥣
+cup|컵|n|☕
+student|학생|n|🧑‍🎓
+teacher|선생님|n|🧑‍🏫
+doctor|의사|n|🧑‍⚕️
+nurse|간호사|n|👩‍⚕️
+drum|드럼|n|🥁
+piano|피아노|n|🎹
+violin|바이올린|n|🎻
+color|색깔|n|🎨
+voice|목소리|n|🗣️+🎵
+number|숫자|n|🔢
+dirty|더러운|a|👕+🟫
+quick|재빠른|a|💨
+late|늦은|a|⏰+😰
+sport|스포츠|n|🏅
+music|음악|n|🎶
+animal|동물|n|🦁+🐰
+movie|영화|n|🎬
+clothes|옷|n|👚
+bat|박쥐|n|🦇
+snail|달팽이|n|🐌
+spider|거미|n|🕷️
+football|미식축구|n|🏈
+ski|스키|n|🎿
+swimming|수영|n|🏊+🩱
+baseball|야구|n|⚾
+tennis|테니스|n|🎾
+try|시도하다|v|💪+🔥
+wash|씻다|v|🧼+👐
+say|말하다|v|💬
+wake|깨다|v|⏰+😳
+jump|점프하다|v|🦘
+hop|깡충 뛰다|v|🐰+⬆️
+crawl|기다|v|👶+🐢
+young|어린|a|🌱+🧒
+old|늙은|a|🧓
+shout|소리치다|v|📢
+thick|두꺼운|a|📚+📏
+soft|부드러운|a|☁️
+food|음식|n|🍱+🍙
+fruit|과일|n|🍉+🍇
+vegetable|채소|n|🥦
+meat|고기|n|🍖
+pillow|베개|n|🛏️+💤
+son|아들|n|👨‍👦
+daughter|딸|n|👩‍👧
+grandma|할머니|n|👵+❤️
+parent|부모|n|👪
+grandpa|할아버지|n|👴
+grandparent|조부모|n|👴+👵
+friend|친구|n|🧑‍🤝‍🧑
+motorcycle|오토바이|n|🏍️
+helicopter|헬리콥터|n|🚁
+fire truck|소방차|n|🚒
+ambulance|구급차|n|🚑
+peach|복숭아|n|🍑
+watermelon|수박|n|🍉
+pear|(과일) 배|n|🍐
+plum|자두|n|🍑+🟣
+pineapple|파인애플|n|🍍
+study|공부하다|v|✏️+📚
+listen|(귀 기울여) 듣다|v|🎧
+laugh|웃다|v|😂
+talk|대화하다/이야기하다|v|🗨️
+spring|봄|n|🌸+🌱
+summer|여름|n|🍉+☀️
+winter|겨울|n|⛄
+season|계절|n|🍂
+cute|귀여운|a|🥰
+beautiful|아름다운|a|🌺
+handsome|잘생긴|a|🤵+✨
+pretty|예쁜|a|💐
+show|보여주다|v|👉+🖼️
+buy|사다|v|🛒
+sell|팔다|v|🏷️
+get|받다/얻다|v|🙌+🎁
+catch|잡다|v|🧤+⚾
+body|몸|n|🧍
+shoulder|어깨|n|🤷
+neck|목|n|🧣
+chest|가슴|n|🫁
+hip|엉덩이|n|🩳
+tell|말해주다/알려주다|v|🗣️+👂
+dance|춤추다|v|🕺
+sing|노래하다|v|🎤
+learn|배우다|v|📘+💡
+rabbit|토끼|n|🐰
+write|쓰다|v|✍️
+goat|염소|n|🐐
+horse|말|n|🐴
+sheep|양|n|🐑
+panda|판다|n|🐼
+lamb|새끼 양|n|🐑+🍼
+kind|친절한|a|🤗+💗
+clever|영리한|a|🦉
+smart|똑똑한|a|🤓
+careful|조심스러운|a|⚠️+👀
+sky|하늘|n|🪁
+sun|태양|n|☀️
+cloud|구름|n|☁️+☁️
+moon|달|n|🌕
+star|별|n|⭐
+hot|더운|a|🔥
+warm|따뜻한|a|🧣+☕
+cool|시원한|a|🧊+😊
+dry|건조한|a|🏜️
+rain|비|n|🌧️
+snow|(겨울에 내리는) 눈|n|❄️
+wind|바람|n|🌬️
+ice|얼음|n|🧊
+fog|안개|n|🌫️
+man|남자|n|👨
+king|왕|n|🤴+👑
+people|사람들|n|👥
+fairy|요정|n|🧚
+woman|여자|n|👩
+queen|여왕|n|👸+👑
+prince|왕자|n|🤴
+princess|공주|n|👸
+egg|달걀|n|🥚
+corn|옥수수|n|🌽
+rice|쌀|n|🍚
+beef|소고기|n|🥩
+pork|돼지고기|n|🥓
+excited|신이 난|a|🤩
+scared|겁먹은/무서워하는|a|😨
+surprised|놀란|a|😲
+tired|피곤한|a|😩
+bored|지루한|a|🥱
+strong|강한|a|🦍
+fast|빠른|a|🐆+💨
+slow|느린|a|🐢
+lazy|게으른|a|🦥
+scissors|가위|n|✂️
+note|메모|n|🗒️
+shape|모양|n|🔷+🔺
+ship|(물 위를 다니는) 배|n|🚢
+boat|작은 배|n|⛵
+truck|트럭|n|🚚
+subway|지하철|n|🚇
+skate|스케이트 타다|v|⛸️
+soccer|축구|n|⚽
+jog|천천히 달리다|v|🏃+🌳
+skip|건너뛰다|v|⏭️
+ballet|발레|n|🩰
+tooth|이/치아|n|🦷
+fish|물고기|n|🐟
+bug|벌레|n|🪲
+shark|상어|n|🦈
+whale|고래|n|🐳
+dolphin|돌고래|n|🐬
+hair|머리카락|n|💇
+lip|입술|n|💋
+tag|이름표|n|🏷️+📛
+sand|모래|n|🏖️+🪣
+heart|심장|n|❤️
+soap|비누|n|🧼
+toothbrush|칫솔|n|🪥
+toothpaste|치약|n|🪥+🦷
+towel|수건|n|🛁+🧺
+bath|목욕|n|🛁
+move|움직이다|v|📦+🚚
+nod|끄덕이다|v|🙆
+put|놓다|v|👇+📦
+hate|몹시 싫어하다|v|😤
+hug|안다|v|🤗+❤️
+bathroom|욕실|n|🚿
+bedroom|침실|n|🛏️+🚪
+dining room|(집 안의) 식사하는 방|n|🍽️+🚪
+living room|거실|n|🛋️+📺
+toilet|화장실|n|🚽
+nice|멋진/좋은|a|👍+😊
+fine|괜찮은|a|👌
+wet|젖은|a|💦
+weak|약한|a|🪫
+gentle|상냥한|a|🌸+😊
+loud|시끄러운|a|🔊
+today|오늘|d|📅+👇
+tomorrow|내일|d|📅+➡️
+yesterday|어제|d|📅+⬅️
+then|그다음에|d|👉+2️⃣
+volleyball|배구|n|🏐
+basketball|농구|n|🏀
+score|점수|n|🔢+⚽
+fire|불|n|🔥+🪵
+potato|감자|n|🥔
+carrot|당근|n|🥕
+cucumber|오이|n|🥒
+pumpkin|호박|n|🎃
+tomato|토마토|n|🍅
+museum|박물관|n|🏛️
+library|도서관|n|📚+🏢
+bookstore|서점|n|📚+🏪
+hospital|병원|n|🏥
+air|공기|n|🌬️+🎈
+afraid|두려운|a|😰
+glad|기쁜|a|😄
+healthy|건강한|a|🥗+💪
+lonely|외로운|a|🥺
+husband|남편|n|🤵+💍
+wife|아내|n|👰
+uncle|삼촌|n|👨‍🦱
+aunt|이모/고모|n|👩‍🦰
+know|알다|v|🧠+✅
+sit|앉다|v|🧘
+stand|서다|v|🧍+🦶
+find|찾다|v|🔍
+take|가져가다/데려가다|v|🫳+📦
+puppy|강아지|n|🐶
+kitten|새끼 고양이|n|🐱+🧶
+piglet|새끼 돼지|n|🐷
+chick|병아리|n|🐥
+farmer|농부|n|🧑‍🌾
+dancer|댄서|n|💃
+driver|운전기사|n|🚕
+firefighter|소방관|n|🧑‍🚒
+painter|화가|n|🧑‍🎨
+beach|해변|n|🏖️
+mountain|산|n|⛰️
+sea|바다|n|🐠+🌊
+hill|언덕|n|🌄
+valley|계곡|n|⛰️+💧
+ask|묻다|v|❓
+answer|대답하다|v|💬+✅
+break|부수다|v|💥
+drive|운전하다|v|🚗+💨
+bee|벌|n|🐝
+fly|날다|v|🐦+☁️
+ant|개미|n|🐜
+butterfly|나비|n|🦋
+hen|암탉|n|🐔+🥚
+worm|지렁이|n|🪱
+caterpillar|애벌레|n|🐛
+honey|꿀|n|🍯
+web|거미줄|n|🕸️
+sunny|맑은|a|🌞
+cloudy|흐린|a|☁️+🌥️
+rainy|비 오는|a|☔
+windy|바람 부는|a|🍃+🌬️
+snowy|눈 오는|a|🌨️
+floor|바닥|n|🟫+🧹
+ceiling|천장|n|🏠+💡
+stair|계단|n|🪜+⬆️
+wall|벽|n|🧱
+think|생각하다|v|🤔
+want|원하다|v|🥺+🙏
+upstairs|위층|d|⬆️+🚪
+habit|습관|n|🔁+🪥
+high|높은|a|🏔️
+heavy|무거운|a|⚖️+🐘
+easy|쉬운|a|👌+😄
+same|같은|a|🟰
+different|다른|a|🔀
+let|허락하다|v|🙆+👌
+teach|가르치다|v|🧑‍🏫+📘
+swim|수영하다|v|🏊
+grow|자라다|v|🌱+⬆️
+stretch|늘이다|v|🤸+↔️
+fight|싸우다|v|🥊
+left|왼쪽|n|⬅️
+right|오른쪽|n|➡️+✋
+front|앞쪽|n|⬆️+🧍
+near|가까운|a|📍+🤏
+farm|농장|n|🚜
+zoo|동물원|n|🦁+🦒
+sunshine|햇빛|n|☀️+✨
+rainbow|무지개|n|🌈
+cold|추운|a|🥶
+street|거리|n|🏪+🚶
+building|건물|n|🏢
+sign|표지판|n|🪧
+road|길|n|🛣️+🚗
+pond|연못|n|🪷
+lake|호수|n|🏞️+🦆
+river|강|n|🏞️+🐟
+bridge|(강 위의) 다리|n|🌉
+jungle|정글|n|🌴
+police|경찰|n|👮
+word|단어|n|🔤
+guitar|기타|n|🎸
+always|항상|d|♾️
+bucket|양동이|n|🪣
+flute|플루트|n|🪈
+sugar|설탕|n|🍬
+salt|소금|n|🧂
+flour|밀가루|n|🌾+🍞
+money|돈|n|💰
+coin|동전|n|🪙
+price|가격|n|🏷️+💲
+cash|현금|n|💵
+paint|칠하다|v|🖌️
+climb|오르다|v|🧗
+lift|들어올리다|v|🏋️
+pull|당기다|v|🪢
+push|밀다|v|👐
+drop|떨어뜨리다|v|💧+⬇️
+bone|뼈|n|🦴
+tongue|혀|n|👅
+brain|뇌|n|🧠
+silent|고요한|a|🤫
+throat|목구멍|n|🗣️+🩺
+rich|부유한|a|💎+💰
+poor|가난한|a|🪙+😢
+strange|이상한|a|🤨
+shy|수줍은|a|😳
+wonderful|훌륭한|a|🌟
+camel|낙타|n|🐫
+deer|사슴|n|🦌
+giraffe|기린|n|🦒
+monkey|원숭이|n|🐵
+zebra|얼룩말|n|🦓
+way|길/방법|n|🗺️+👉
+rocket|로켓|n|🚀
+yacht|요트|n|🛥️
+eagle|독수리|n|🦅
+taxi|택시|n|🚖
+penguin|펭귄|n|🐧
+seagull|갈매기|n|🕊️+🌊
+rock|바위|n|🪨
+gold|금|n|🥇
+silver|은|n|🥈
+volcano|화산|n|🌋
+difficult|어려운|a|😓
+low|낮은|a|⬇️
+thin|얇은|a|📄+🤏
+brave|용감한|a|🦁+💪
+round|둥근|a|⚪+⭕
+camp|야영|n|⛺
+grain|곡물|n|🌾
+rug|깔개/러그|n|🧶
+couch|소파|n|🛋️
+broom|빗자루|n|🧹
+classmate|반 친구|n|🧑‍🤝‍🧑+🏫
+mask|마스크|n|😷
+dragon|용|n|🐉
+thing|것/물건|n|📦+❓
+adventure|모험|n|🗺️+🎒
+dream|꿈|n|💭
+angel|천사|n|👼
+ghost|유령|n|👻
+magic|마법|n|🪄
+classroom|교실|n|🏫+🪑
+kick|차다|v|🦵+⚽
+build|짓다|v|🏗️
+live|살다|v|🏡+👨‍👩‍👧
+fist|주먹|n|✊
+palm|손바닥|n|🤚
+flat|평평한|a|➖
+skin|피부|n|🖐️
+whistle|휘파람 불다|v|😗
+elbow|팔꿈치|n|💪+👈
+toe|발가락|n|🦶+👇
+thumb|엄지손가락|n|👍+👈
+knee|무릎|n|🦵+👈
+beard|수염|n|🧔
+stone|돌|n|🪨+🪨
+court|코트/운동장|n|🎾+🏟️
+post office|우체국|n|🏤
+squirrel|다람쥐|n|🐿️
+moth|나방|n|🦋+🌙
+line|선/줄|n|〰️
+lizard|도마뱀|n|🦎
+mouse|생쥐|n|🐭+🧀
+laundry|빨래|n|🧺+👕
+bathtub|욕조|n|🛁+🦆
+shower|샤워|n|🚿+💦
+restroom|(공공장소) 화장실|n|🚻
+rest|쉬다|v|😌+☕
+start|시작하다|v|🚦+🏃
+end|끝/끝나다|v|🔚
+ride|(탈것을) 타다|v|🚲+🧒
+meet|만나다|v|👫+👋
+brush|솔/붓|n|🖌️+🎨
+festival|축제|n|🎪
+stage|무대|n|🎭
+fun|재미|n|🎉+😆
+band|밴드|n|🎸+🥁
+concert|콘서트|n|🎤+🎶
+bright|밝은|a|🔆
+dark|어두운|a|🌑
+last|마지막의|a|🔚+🏁
+early|이른|a|🐓+⏰
+large|커다란/넓은|a|🐋
+clean|청소하다/깨끗이 하다|v|✨+🧹
+stop|멈추다|v|🛑
+throw|던지다|v|🤾
+keep|간직하다/유지하다|v|📦+💗
+pay|지불하다|v|💳
+first|첫 번째|n|🥇+1️⃣
+second|두 번째/(시간) 초|n|🥈+⏱️
+third|세 번째|n|🥉
+fourth|네 번째|n|4️⃣+🏃
+fifth|다섯 번째|n|5️⃣+🏃
+vet|수의사|n|🧑‍⚕️+🐶
+pilot|조종사|n|🧑‍✈️
+lesson|수업|n|📖+🧑‍🏫
+eyebrow|눈썹|n|🤨+👁️
+forehead|이마|n|🙂+👆
+cheek|뺨|n|☺️
+chin|턱|n|🙂+👇
+jaw|아래턱|n|😮
+greet|인사하다|v|😃+👋
+hurry|서두르다|v|🏃+💨
+check|확인하다|v|✅
+mix|섞다|v|🥣+🥄
+draw|그리다|v|✏️+🖼️
+dust|먼지|n|🌫️+🧹
+point|가리키다|v|👉
+yard|마당|n|🏡+🌳
+net|그물|n|🥅
+candle|양초|n|🕯️
+expensive|비싼|a|💰+🏷️
+cheap|싼|a|🏷️+👍
+sick|아픈|a|🤒
+hold|(손에) 들다/쥐다|v|✋+🎈
+tonight|오늘 밤|d|🌃
+minute|분|n|⏱️
+hour|(60분) 시간|n|⌛
+date|날짜|n|📆
+year|해/년|n|🗓️
+relative|친척|n|👨‍👩‍👧‍👦+🏡
+face|얼굴|n|🙂
+pencil|연필|n|✏️
+set|(제자리에) 놓다/맞추다|v|⏰+✋
+dictionary|사전|n|📕+🔤
+triangle|삼각형|n|🔺
+question|질문|n|❓+🙋
+class|반/학급|n|🏫+👥
+exam|(학교) 시험|n|📝+✏️
+uniform|제복/유니폼|n|👔
+niece|조카딸|n|👧+🎀
+cousin|사촌|n|👨‍👩‍👦+🧒
+nephew|조카|n|👦+🧢
+adult|어른|n|🧑
+twin|쌍둥이|n|👯
+actor|배우|n|🎭+🧑
+cook|요리사|n|🧑‍🍳
+librarian|사서|n|📚+🧑‍💼
+scientist|과학자|n|🧑‍🔬
+circle|원|n|⭕
+welcome|환영하다|v|🤗+🚪
+attic|다락방|n|🏠+📦
+worry|걱정하다|v|😟
+care|돌보다|v|💗
+sink|싱크대|n|🚰
+basement|지하실|n|⬇️+🏠
+become|~이 되다|v|🐛+🦋
+ready|준비된|a|👌+🎒
+wear|입다|v|👕+🧍
+invite|초대하다|v|💌
+bottle|병|n|🍼
+pot|냄비|n|🍲
+kettle|주전자|n|🫖
+pan|프라이팬|n|🍳+🔥
+plate|(납작한) 접시|n|🍽️+🍰
+bank|은행|n|🏦
+bakery|제과점|n|🥐
+church|교회|n|⛪
+restaurant|식당|n|🍽️+🧑‍🍳
+mall|쇼핑몰|n|🛍️
+market|시장|n|🛒+🍎
+Monday|월요일|n|📅+1️⃣
+Tuesday|화요일|n|📅+2️⃣
+Wednesday|수요일|n|📅+3️⃣
+Thursday|목요일|n|📅+4️⃣
+Friday|금요일|n|📅+5️⃣
+Saturday|토요일|n|📅+6️⃣
+Sunday|일요일|n|📅+7️⃣
+weekend|주말|n|🎈+📅
+month|달/월|n|🗓️+🌙
+week|주|n|🗓️+7️⃣
+weather|날씨|n|🌦️
+storm|폭풍|n|⛈️
+flood|홍수|n|🌊+🏠
+theater|극장|n|🎭+🎟️
+ranch|목장|n|🤠+🐎
+furniture|가구|n|🛋️+🪑
+closet|옷장|n|🚪+👕
+drawer|서랍|n|🗄️
+shelf|선반|n|📚+🪵
+lose|지다|v|😞
+win|이기다|v|🏆+😄
+shop|쇼핑하다|v|🛍️+😊
+bite|물다|v|🍎+😬
+team|팀|n|👥+⚽
+famous|유명한|a|🌟+📸
+favorite|가장 좋아하는|a|💖
+proud|자랑스러운|a|🦚
+amazing|놀라운|a|🤩+✨
+trust|신뢰하다/믿다|v|🤝+💗
+alligator|악어 (앨리게이터)|n|🐊
+cheetah|치타|n|🐆
+bull|황소|n|🐂
+rat|쥐|n|🐀
+snake|뱀|n|🐍
+enjoy|즐기다|v|😄+🎶
+chat|이야기하다|v|💬+☕
+count|세다|v|🖐️+🔢
+print|출력하다|v|🖨️
+hope|바라다|v|🌠
+chef|주방장/요리사|n|🧑‍🍳+🍝
+soldier|군인|n|💂
+square|정사각형|n|🟦
+engineer|엔지니어|n|🧑‍🔧
+astronaut|우주비행사|n|🧑‍🚀
+yawn|하품하다|v|🥱+💤
+speak|(언어를) 말하다|v|🗣️
+whisper|속삭이다|v|🤫+👂
+yell|고함치다|v|📢+😠
+clap|박수치다|v|👏
+city|도시|n|🏙️
+country|나라/시골|n|🏞️+🏡
+desert|사막|n|🏜️+🐫
+forest|숲|n|🌲
+island|섬|n|🏝️
+grow up|어른이 되다|v|🧒+🧑
+have fun|즐겁게 놀다|v|🎈+😆
+fence|울타리|n|🚧+🐑
+cage|새장/우리|n|🐦+🔒
+wood|나무/목재|n|🪵
+flag|깃발|n|🚩
+octopus|문어|n|🐙
+starfish|불가사리|n|⭐+🌊
+turtle|거북이|n|🐢+🌊
+crab|게|n|🦀
+lobster|바닷가재|n|🦞
+hometown|고향|n|🏡+❤️
+fever|(몸의) 열|n|🤒+🌡️
+pain|통증/아픔|n|🤕
+blood|피|n|🩸
+cut|자르다|v|✂️+📄
+step|걸음/단계|n|👣
+diary|일기|n|📔
+newspaper|신문|n|📰
+stick|막대기|n|🥢
+size|크기|n|📏+🐘
+nature|자연|n|🌿
+village|(시골) 마을|n|🏘️+🌾
+place|장소|n|📍
+neighbor|이웃|n|🏡+👋
+well|잘/건강하게|d|👍+💪
+bow|절하다|v|🙇+🧧
+teen|십대|n|🧑+🎧
+guest|손님|n|🧳+🛎️
+watch|지켜보다/시청하다|v|📺
+insect|곤충|n|🦗
+tail|꼬리|n|🐈
+wing|날개|n|🪽
+pair|한 쌍|n|🧦+🧦
+ladybug|무당벌레|n|🐞+🍃
+sneeze|재채기하다|v|🤧
+clay|점토|n|🏺
+age|나이|n|🎂+🔢
+clinic|의원/작은 병원|n|🏥+🩺
+factory|공장|n|🏭
+join|~에 가입하다/함께 하다|v|🙋+👥
+shake|흔들다|v|🫨
+send|보내다|v|📨
+solve|해결하다|v|🧩+💡
+salty|짠|a|🧂+😝
+sweet|달콤한|a|🍭
+spicy|매운|a|🌶️
+juicy|즙이 많은|a|🍊+💦
+gloomy|우울한|a|🌧️+😔
+sour|(맛이) 신|a|🍋
+hippopotamus|하마|n|🦛
+crocodile|악어 (크로커다일)|n|🐊+🌊
+ostrich|타조|n|🐦+🏜️
+wolf|늑대|n|🐺
+dinosaur|공룡|n|🦕
+waiter|웨이터|n|🤵+🍽️
+oval|타원형|n|🥚+⭕
+station|역|n|🚉
+airport|공항|n|🛫
+traffic light|신호등|n|🚦
+harbor|항구|n|⚓+🚢
+tower|탑|n|🗼
+letter|편지/글자|n|✉️
+calm|차분한|a|😌
+correct|올바른|a|✅+⭕
+glass|유리/유리컵|n|🥛+🪟
+chew|씹다|v|🐄+🌿
+rise|떠오르다/올라가다|v|☀️+⬆️
+hammer|망치|n|🔨
+rope|밧줄|n|🪢+🧗
+string|끈|n|🧵
+ladder|사다리|n|🪜
+stomach|위/배|n|🍙+😋
+musician|음악가|n|🧑‍🎤
+fisherman|어부|n|🎣
+artist|예술가|n|🧑‍🎨+🖼️
+dentist|치과의사|n|🦷+🧑‍⚕️
+order|주문하다|v|📋+🍔
+mud|진흙|n|🟫+💧
+cover|덮다|v|🛏️+🛌
+attend|참석하다|v|🙋+🏫
+silly|바보 같은/우스꽝스러운|a|🤪
+kindergarten|유치원|n|🏫+🧸
+college|대학|n|🎓
+surprise|놀라게 하다|v|🎉+😲
+later|나중에|d|⏳+👋
+soon|곧|d|🔜
+before|전에|d|⏮️
+next|다음|d|⏭️+👉
+after|후에|d|⏩
+top|꼭대기|n|🔝
+upper|위쪽의|a|⬆️+🛏️
+tray|쟁반|n|🍱+🍽️
+button|단추|n|🔘
+postcard|엽서|n|💌+🏞️
+handle|손잡이|n|🚪+✋
+ticket|표|n|🎟️
+torch|횃불|n|✋+🔥
+hunt|사냥하다|v|🏹
+chain|사슬|n|⛓️
+type|타자를 치다|v|⌨️
+lead|이끌다|v|🧭+🚩
+change|바꾸다/변하다|v|🔄
+forgive|용서하다|v|🤗+🕊️
+deep|깊은|a|🌊+⬇️
+noisy|떠들썩한/시끄러운|a|📢+🙉
+hard|단단한/어려운|a|🪨+💪
+quiet|조용한|a|🤫+🍃
+tiny|아주 작은|a|🐜+🤏
+skill|기술|n|🛠️+⭐
+coach|코치|n|📣+⚽
+race|경주|n|🏁
+schedule|일정|n|🗓️+⏰
+rule|규칙|n|📜+✅
+hide|숨다|v|🙈
+peel|껍질을 벗기다|v|🍌+✋
+pass|지나가다/건네주다|v|🏀+🤲
+root|뿌리|n|🌱+⬇️
+stem|줄기|n|🌷+⬇️
+seed|씨앗|n|🌰
+noise|소음|n|🔊+😖
+mess|엉망|n|🌪️+🧸
+hobby|취미|n|🎨+🧩
+art|예술|n|🎨+🖼️
+idea|생각|n|💡
+manager|매니저|n|💼
+owner|주인|n|🔑+🏠
+sailor|선원|n|⚓
+lady|숙녀/여성분|n|👩+👒
+pebble|조약돌|n|🪨+🤏
+treasure|보물|n|💎+🗺️
+shadow|그림자|n|👤
+diamond|다이아몬드|n|💎
+wave|파도/(손) 흔들기|n|🌊
+scream|비명 지르다|v|😱
+shell|조개껍데기|n|🐚
+lock|잠그다|v|🔒+🚪
+cartoon|만화 영화/만화|n|📺+🐭
+seaweed|해초|n|🌿+🌊
+pepper|후추|n|🧂+⚫
+spinach|시금치|n|🥬
+bamboo|대나무|n|🎋
+stripe|줄무늬|n|🦓+〰️
+mail|우편|n|📬
+hero|영웅|n|🦸
+bubble|거품|n|🫧
+vacation|방학|n|🏖️+🧳
+hundred|백 (100)|n|💯
+thousand|천 (1000)|n|💯+🔟
+million|백만|n|💰+💰
+twice|두 번|d|2️⃣+🔁
+witch|마녀|n|🧙‍♀️
+back|뒤로 가다/돌아오다|v|🔙
+hunter|사냥꾼|n|🏹+🌲
+patient|환자|n|🛌+🤒
+crown|왕관|n|👑
+magician|마술사|n|🎩
+stir|젓다/휘젓다|v|🥄+🌀
+gardener|정원사|n|🧑‍🌾+🌷
+package|소포|n|📦+📮
+take care of|~을 돌보다|v|💗+🐶
+take a picture|사진을 찍다|v|📸
+make a mistake|실수하다|v|😅
+make the bed|침대를 정리하다|v|🛏️+✨
+walk around|돌아다니다|v|🚶+🔄
+step into|들어서다|v|👣+🚪
+turn on|켜다|v|💡+👆
+make friends|친구를 사귀다|v|🧑‍🤝‍🧑+😊
+get to|~에 도착하다|v|📍+🏃
+with|~와 함께|f|🧑‍🤝‍🧑+❤️
+come true|이루어지다|v|🌠+✨
+wait for|~을 기다리다|v|⏳+🚏
+pleased with|~에 기쁜|a|😊+💯
+interested in|~에 관심 있는|a|🧐
+engine|엔진|n|⚙️
+key|열쇠|n|🔑
+unusual|특이한|a|🦄
+war|전쟁|n|🪖
+worried about|~을 걱정하는|a|😟+💭
+dive|뛰어들다/잠수하다|v|🤿
+lie|거짓말하다/눕다|v|🛌+😌
+fall|떨어지다|v|🍂+⬇️
+fill|채우다|v|🥛+⬆️
+hang|걸다|v|🧥+🪝
+lucky|운 좋은|a|🍀
+terrible|끔찍한|a|😖
+fresh|신선한|a|🥬+💧
+tasty|맛이 좋은|a|🍕+😋
+friendly|다정한/친근한|a|😊+🫶
+sharp|날카로운|a|✏️+⚠️
+horrible|무시무시한|a|😱+👻
+powerful|강력한|a|🦾
+perfect|완벽한|a|💯+⭐
+awful|지독한/형편없는|a|😣
+simple|단순한|a|⚪+👌
+photograph|사진|n|🖼️+📷
+magazine|잡지|n|📰+👗
+cinema|영화관|n|🎦
+list|목록|n|📋
+holiday|휴일|n|🎉+📅
+barn|헛간|n|🛖+🐄
+hut|오두막|n|🛖
+cabin|통나무집|n|🪵+🏠
+castle|성|n|🏰
+miss|그리워하다/놓치다|v|💭+😢
+job|직업|n|💼+🧑
+part|부분|n|🧩
+course|과정|n|📚+➡️
+turn|돌다/방향을 바꾸다|v|↪️
+frame|액자|n|🖼️+🔲
+injury|부상/상처|n|🩹
+ache|(계속) 아프다/쑤시다|v|🤕+😖
+cough|기침하다|v|😷+💨
+drug|약물|n|💊+⚠️
+pill|알약|n|💊
+interesting|흥미로운|a|🤩+📖
+curious|호기심 많은|a|🧐+❓
+active|활발한|a|🤸+⚡
+shiny|반짝이는|a|✨
+hurt|다치다/아프다|v|🩹+😢
+onion|양파|n|🧅
+cabbage|양배추|n|🥬+🥗
+garlic|마늘|n|🧄
+pea|완두콩|n|🫛
+bean|콩|n|🫘
+beverage|음료|n|🧋
+fear|두려움/무서움|n|😨+👻
+grocery|식료품/먹거리|n|🛒+🥕
+belief|믿음|n|🙏+✨
+moment|순간|n|⏱️+✨
+anger|화/분노|n|💢
+friendship|우정|n|🤝+💕
+pride|자랑스러움|n|🏅+😊
+beauty|아름다움|n|🌹
+forget|잊다|v|🤷+💭
+reason|이유|n|❓+💡
+aware|인식하는|a|💡+👀
+remember|기억하다|v|🧠+💭
+trouble|곤란/말썽|n|😵
+tour|(둘러보는) 관광 여행|n|🗺️+🚌
+wedding|결혼식|n|💒
+riddle|수수께끼|n|🧩+❓
+hike|등산하다|v|🥾
+thought|(떠오른) 생각/사고|n|💭+🤔
+trip|(짧은) 여행|n|🧳
+future|미래|n|🔮
+image|이미지|n|🖼️+✨
+album|앨범|n|📒
+film|영화/필름|n|🎞️
+world|세계|n|🌍
+person|사람|n|🧑+👆
+female|여성/암컷|n|♀️
+male|남성|n|♂️
+midnight|자정/한밤중|n|🕛
+outside|바깥|d|🌳+🚪
+visit|방문하다|v|🏠+🚶
+travel|여행하다|v|✈️+🧳
+leave|떠나다|v|🚶+🚪
+arrive|도착하다|v|🛬
+plan|계획하다|v|📝+🗓️
+dove|흰 비둘기|n|🕊️+🤍
+belly|(몸의) 배|n|🧸+👆
+heel|발뒤꿈치|n|🦶+👠
+gym|체육관|n|🏋️+🏢
+finish|끝내다|v|🏁+🎉
+explore|탐험하다|v|🧭+🔦
+feed|먹이다|v|🥄+👶
+discover|발견하다|v|🔎+💎
+pour|붓다|v|🫗
+wish|소원|n|🌠+🙏
+lay|~을 놓다/눕히다|v|🛏️+👶
+pat|토닥이다/쓰다듬다|v|🐶+✋
+calendar|달력|n|📅
+action|행동|n|🎬+🏃
+tear|눈물|n|💧+😢
+appetite|입맛/식욕|n|🍽️+😋
+memory|기억|n|🧠+📸
+suit|정장|n|🤵+👔
+carry|나르다|v|📦+💪
+slide|미끄러지다|v|🛝+😆
+breath|숨|n|😮‍💨
+giggle|낄낄 웃다|v|🤭
+rinse|헹구다|v|🚿+🥬
+seafood|해산물|n|🦐
+taste|맛보다|v|🥄+👅
+wire|철사|n|🔌
+swan|백조|n|🦢
+pigeon|비둘기|n|🐦+🏙️
+feather|깃털|n|🪶
+scorpion|전갈|n|🦂
+bake|(오븐에) 굽다|v|🧁
+fry|튀기다|v|🍤
+steam|(음식을) 찌다|v|♨️
+boil|끓이다|v|🍜+🔥
+chop|다지다|v|🥕+🔪
+safe|안전한|a|🦺
+wide|넓은|a|↔️
+narrow|좁은|a|🤏+↕️
+wild|야생의|a|🐅
+straight|똑바른|a|⬆️+📏
+seat|자리|n|💺
+path|오솔길/좁은 길|n|👣+🌲
+garage|차고|n|🚗+🏠
+wheel|바퀴|n|🛞
+traffic|교통|n|🚗+🚙
+planet|행성|n|🪐
+port|(큰 배가 드나드는) 항만|n|⚓+🏗️
+cliff|절벽|n|🏔️+⚠️
+field|들판|n|🌻+🌾
+spot|(특정한) 자리/지점|n|📍+❌
+life|삶/생명|n|🌱+💓
+birth|탄생|n|👶+🎉
+earth|지구|n|🌏
+sale|판매/할인|n|🏷️+⬇️
+nut|견과류|n|🥜
+begin|(새로) 시작하다|v|🏁+▶️
+pick|고르다|v|🍒+✋
+hit|치다|v|⚾+🏏
+kill|죽이다|v|🚫
+message|메시지|n|📩
+field trip|현장 학습|n|🚌+🏛️
+jewelry|장신구|n|💍+💎
+height|키/높이|n|📏+🧍
+length|길이|n|📏+↔️
+position|위치|n|📍+🗺️
+weight|무게|n|⚖️
+allergy|알레르기|n|🤧+🌼
+balance|균형|n|🤹
+medicine|약|n|💊+🧴
+headache|두통|n|🤕+💆
+stomachache|복통|n|😣+🍙
+toothache|치통|n|🦷+😣
+earache|귀앓이/귀 통증|n|👂+😣
+foolish|어리석은|a|🤪+❓
+fur|털|n|🐻+🧸
+paw|(동물) 발|n|🐾
+claw|(동물) 발톱|n|🐯+🐾
+beak|부리|n|🐦+👄
+nest|둥지|n|🪺
+ordinary|평범한|a|🙂+🟰
+recover|회복하다|v|❤️‍🩹
+rob|빼앗다|v|🦹
+work|일하다/작동하다|v|💼+⚙️
+rub|문지르다|v|🧽
+waste|낭비하다|v|🗑️+💸
+collect|수집하다|v|🧺+🐚
+gather|한데 모이다|v|🧑‍🤝‍🧑+👥
+mop|걸레질하다|v|🧹+💧
+blow|불다|v|🌬️+🕯️
+roll|구르다|v|🎳
+spray|뿌리다|v|💦+🌿
+bring back|가져오다/되돌리다|v|↩️+📦
+heal|치유하다|v|🩹+💖
+tourist|관광객|n|📸+🗺️
+passenger|승객|n|💺+🚌
+lawyer|변호사|n|⚖️+💼
+stranger|낯선 사람|n|👤+❓
+humor|유머|n|😂+💬
+temperature|온도|n|🌡️
+champion|챔피언|n|🏆+🥇
+clue|단서|n|🔍+👣
+rescue|구조하다|v|🛟
+costume|의상|n|🎭+👗
+file|파일|n|📁
+mistake|실수|n|❌
+captain|선장|n|🧑‍✈️+🚢
+secret|비밀|n|🤫+🔒
+actress|여배우|n|👩‍🎤
+cello|첼로|n|🎻+🪑
+comb|빗|n|🪮
+accident|사고|n|🚗+💥
+heat|열/열기|n|🔥+🌡️
+cheer up|기운을 내다|v|💪+😊
+wash up|(손·얼굴을) 씻다|v|🧼+😊
+meet up|(약속하고) 만나다|v|🤝+📍
+get together|모이다|v|👨‍👩‍👧+🎉
+sign up|신청하다|v|✍️+📋
+guess|추측하다|v|🤔+❓
+mark|표시하다|v|✔️
+spell|철자를 쓰다|v|🔤+✏️
+gravity|중력|n|🍎+⬇️
+thank|감사하다|v|🙏+💐
+erase|지우다|v|📝+🧽
+dwarf|난쟁이|n|⛏️+🧔
+palace|궁전|n|🏯
+crew|선원/승무원|n|👥+🚢
+ocean|대양|n|🌊+🐋
+wizard|마법사|n|🧙
+teenager|십대 청소년|n|🧑+🎒
+vitamin|비타민|n|💊+🍊
+ingredient|재료|n|🥕+🧅
+subject|과목|n|📚+🔢
+universe|(모든 것을 담은) 우주|n|🌌
+award|(수여하는) 상|n|🏆+🎖️
+energy|에너지|n|⚡+🔋
+goal|목표|n|🎯
+society|사회|n|🏙️+👥
+recycle|재활용하다|v|♻️
+steel|철/강철|n|🔩
+herb|허브|n|🌿+🍃
+science|과학|n|🔬
+spice|향신료|n|🌶️+🧄
+noodle|국수|n|🍜
+ginger|생강|n|🫚
+sauce|소스|n|🥫
+mushroom|버섯|n|🍄
+radish|무|n|🥬+⚪
+brick|벽돌|n|🧱+🧱
+flavor|맛/향|n|🍦
+bar|막대|n|🍫
+needle|바늘|n|🪡
+technology|(과학) 기술|n|💻
+transportation|교통수단|n|🚆+🚌
+row|줄|n|🪑+🪑
+corner|구석|n|🔲+↘️
+look for|~을 찾다|v|🔍+👀
+cheat|속이다|v|🙊
+side|옆/측면|n|↔️+🧍
+middle|가운데|n|🎯+⏺️
+edge|가장자리|n|📐+📏
+downstairs|아래층|d|⬇️+🪜
+climate|기후|n|🌍+🌡️
+trunk|나무줄기/(코끼리) 코|n|🐘+🌳
+space|우주 공간|n|🚀+🌌
+prison|감옥|n|🔒+🏢
+play|(악기를) 연주하다|v|🎹+🎶
+alarm|경보|n|🚨
+nail|못/손톱|n|🔨+💅
+sword|검/칼|n|⚔️
+machine|기계|n|🤖
+pipe|파이프|n|🔧
+magnet|자석|n|🧲
+thigh|허벅지|n|🦵+🩳
+debate|토론|n|🗣️+🗣️
+gallery|갤러리|n|🖼️+🏛️
+bud|꽃봉오리|n|🌷+🤏
+thorn|가시|n|🌹+🌵
+steal|훔치다|v|🦝
+joke|농담|n|😜
+excite|흥분시키다|v|🎢
+imagine|상상하다|v|💭+🦄
+design|디자인하다|v|📐+✏️
+cell|세포|n|🦠
+need|~이 필요하다|v|🙋+❗
+presentation|발표|n|📊
+luck|행운|n|🍀+✨
+view|경치/풍경|n|🏞️+👀
+mood|기분/분위기|n|😌+🎵
+mind|마음|n|🧠+💗
+invent|발명하다|v|💡+🔧
+predict|예측하다|v|🔮+🌦️
+research|연구|n|🔬+📚
+clown|광대|n|🤡
+south|남쪽|n|⬇️+🧭
+north|북쪽|n|⬆️+🧭
+east|동쪽|n|➡️+🧭
+west|서쪽|n|⬅️+🧭
+direction|방향|n|🧭
+seek|탐색하다/구하다|v|🔎
+experiment|실험|n|🧪
+health|건강|n|💪+❤️
+talent|재능|n|🌟+🎨
+joy|기쁨|n|😄+🎈
+microscope|현미경|n|🔬+🦠
+evidence|증거|n|🔍+📄
+interest|관심|n|💡+✨
+sure|확실한|a|👍+✅
+frozen|얼어붙은|a|🧊+🥶
+equal|평등한|a|⚖️+🟰
+dear|친애하는|a|💌+❤️
+telescope|망원경|n|🔭
+wake up|일어나다|v|⏰+🛏️
+upset|속상한|a|😿
+topic|주제|n|💬+📌
+designer|디자이너|n|🎨+✂️
+cashier|계산원|n|💵+🛒
+cone|원뿔|n|🍦+🔺
+earthquake|지진|n|🏚️
+suggest|제안하다|v|💡+🙋
+observe|관찰하다|v|👀+🔬
+carpenter|목수|n|🪚+🪵
+ankle|발목|n|🧦+🦶
+wrist|손목|n|⌚+✋
+muscle|근육|n|💪+✨
+stress|스트레스|n|😫
+laboratory|실험실|n|🧪+🏢
+eyelash|속눈썹|n|👁️+✨
+pollution|오염|n|🏭+💨
+downtown|도심|n|🏙️+🚕
+community|지역사회|n|👥+🏘️
+neighborhood|동네|n|🏘️+🛝
+crowd|군중|n|👥+👥
+crosswalk|횡단보도|n|🚸
+footstep|발소리/발걸음|n|👣+🔊
+environment|환경|n|🌳+🌍
+investigate|조사하다|v|🕵️
+luxury|사치|n|💎+👑
+able|할 수 있는|a|💪+✅
+merry|즐거운|a|🎄
+successful|성공한|a|🏆+🎉
+popular|인기 있는|a|🌟+👥
+excellent|아주 뛰어난/훌륭한|a|🌟+👏
+weed|잡초|n|🌿+🗑️
+structure|구조|n|🧱+🏗️
+typhoon|태풍|n|🌀
+tornado|토네이도|n|🌪️
+foggy|안개 낀|a|🌫️+🚗
+thunder|천둥|n|⚡+🔊
+hurricane|허리케인|n|🌀+🌊
+solar|태양의|a|☀️+🪐
+survey|조사|n|📋+✏️
+feel|느끼다|v|💗+✋
+measure|측정하다|v|📏+🔢
+bend|구부리다|v|🤸+↪️
+compare|비교하다|v|⚖️+🍎
+wrong|틀린|a|❌+✏️
+distance|(떨어진) 거리|n|📍+↔️
+electricity|전기|n|⚡+🔌
+fountain|분수|n|⛲
+sample|표본|n|🧪+🥄
+daily|매일의|a|📅+🔁
+culture|문화|n|🎎
+language|언어|n|🔤+🗣️
+citizen|시민|n|🧑+🏙️
+lid|뚜껑|n|🫙+⬆️
+elementary|초등의|a|🏫+🎒
+fuel|연료|n|⛽
+ceremony|의식|n|🎊
+project|프로젝트|n|📁+🛠️
+camping|캠핑|n|🏕️
+examination|(정식) 시험/검사|n|📝+🩺
+exhibition|전시회|n|🖼️+🎟️
+effort|노력|n|💪+😤
+celebration|기념행사|n|🎉+🎊
+happiness|행복|n|😊+🌈
+result|결과|n|📊+✅
+necklace|목걸이|n|📿
+perfume|향수|n|🌸+🧴
+ring|반지|n|💍
+earring|귀걸이|n|👂+💎
+bracelet|팔찌|n|📿+✋
+generous|관대한|a|🎁+😊
+review|복습하다|v|📖+🔁
+event|행사|n|🎪+📅
+fantasy|환상|n|🦄+✨
+trash|쓰레기|n|🗑️
+straw|빨대|n|🥤+👄
+buyer|구매자|n|🛒+🙋
+customer|고객|n|🛍️+🙋
+tradition|전통|n|🏮
+visitor|방문객|n|🙋+🚪
+shot|주사/사진|n|💉
+history|역사|n|📜
+asleep|잠든|a|😴+🛏️
+wagon|수레|n|🐎+🛒
+peace|평화|n|🕊️+☮️
+solution|해결책|n|💡+✅
+mystery|불가사의/미스터리|n|🔮+❓
+difference|차이|n|🔀+❓
+volunteer|자원봉사자|n|🙋+🤲
+truth|진실|n|✅+🗣️
+junk|쓸모없는 물건|n|🗑️+📦
+law|법|n|⚖️+📜
+resident|주민|n|🏠+🧑
+create|창조하다|v|🎨+✨
+hole|구멍|n|🕳️
+melt|녹다|v|🫠
+borrow|빌리다|v|📚+🤲
+charity|자선/나눔|n|💝
+wink|윙크하다|v|😉
+reach|~에 닿다/도착하다|v|🙋+⬆️
+revolution|혁명|n|🔄+🚩
+lawn|잔디밭|n|🌱+🏡
+absent|결석한|a|🚫+🪑
+ill|병든/아픈|a|🤢
+stream|시냇물|n|🏞️+💧
+swamp|늪|n|🐸+🌿
+puddle|웅덩이|n|💧+👢
+muddy|진흙투성이의|a|🐷+💧
+principal|교장 선생님|n|🧑‍💼+🏫
+rude|무례한|a|😝
+polite|예의 바른|a|💁
+journalist|기자|n|📰+🖊️
+attack|공격하다|v|🦖+💥
+career|경력/진로|n|💼+📈
+scratch|긁다|v|🐱+🐾
+fool|바보|n|🙃
+business|사업|n|💼+🏢
+item|항목|n|📦+🏷️
+wallet|지갑|n|👛
+power|힘|n|🔋
+temple|사원|n|🛕
+tomb|무덤|n|🏜️+🔺
+waterfall|폭포|n|🏞️+💦
+windmill|풍차|n|🌬️+🏡
+ground|땅바닥/지면|n|🟫
+own|자신의|a|🙋+🔑
+burn|(불에) 타다|v|🔥+📄
+clear|맑은/투명한|a|💎+💧
+float|뜨다|v|🎈+⬆️
+switch|전환하다|v|🎛️
+plant|식물|n|🪴
+bark|짖다|v|🐕+🔊
+branch|가지|n|🐦+🌿
+bush|덤불|n|🌳+🌿
+maple|단풍나무|n|🍁
+modern|현대적인|a|🏙️+✨
+organize|정리하다|v|🗂️
+ancient|고대의|a|🏛️+📜
+loose|헐렁한|a|👖+↔️
+dead|죽은|a|🥀
+nervous|긴장한|a|😬
+creative|창의적인|a|🎨+💡
+artistic|예술적인|a|🖌️+🌟
+decorate|꾸미다|v|🎀
+local|지역의|a|📍+🏘️
+practice|연습하다|v|🎹+🔁
+post|게시하다|v|📌
+pile|더미|n|📚+📚
+pack|(짐을) 싸다/꾸리다|v|👕+🧳
+spill|쏟다|v|🥛+💦
+calm down|진정하다|v|😌+🌬️
+check in|체크인하다|v|🏨
+check out|체크아웃하다|v|🏨+👋
+throw away|버리다|v|🗑️+🤾
+go ahead|먼저 가다|v|▶️
+block|막다|v|🧱+✋
+chase|쫓다|v|🐕+🏃
+shoot|쏘다|v|🏀+🎯
+global|세계적인|a|🌐
+scary|무서운|a|🌑+😨
+full|가득 찬|a|🥛+💯
+empty|빈|a|🫙+💨
+crowded|붐비는|a|🚇+👥
+cozy|아늑한|a|🛋️+🧣
+confident|자신감 있는|a|😎
+trade|무역/거래|n|🤝+📦
+god|신/하느님|n|✨+☁️
+liquid|액체|n|💧+🥛
+solid|고체|n|🧊+🪨
+cross|건너다|v|🚸+🚶
+strike|세게 치다/부딪치다|v|⚾+💥
+vote|투표하다|v|🗳️
+judge|판사/판단하다|n|🧑‍⚖️
+deadline|마감일|n|⏰+📝
+knock|(문을) 두드리다|v|🚪+✊
+journey|여정|n|🧳+🗺️
+flight|비행|n|✈️+☁️
+fair|공평한|a|⚖️+😊
+report|보고서|n|📄+📊
+sheet|(침대) 시트/종이 한 장|n|📃
+signature|서명|n|✍️+📃
+give up|포기하다|v|🏳️
+take out|꺼내다|v|📤
+show up|나타나다|v|🙋+✨
+look like|~처럼 보이다|v|🪞+👯
+line up|줄 서다|v|🚶+🚶
+diet|식단|n|🥗
+fashion|패션|n|🕶️+👠
+fee|요금|n|💵+🎟️
+receipt|영수증|n|🧾
+clerk|점원|n|🧑‍💼+🛒
+cheer|응원하다|v|📣
+hatch|부화하다|v|🐣
+galaxy|은하|n|🌌+✨
+slip|(실수로) 미끄러지다|v|🍌+😵
+fossil|화석|n|🦴+🪨
+speed|속도|n|🏎️
+honest|정직한|a|😇
+thankful|감사한|a|🙏+😊
+wise|지혜로운|a|🦉+📚
+double|두 배의|a|✌️
+communicate|소통하다|v|💬+📱
+audience|청중|n|👏+👥
+challenge|도전|n|🧗+⛰️
+youth|청소년|n|🧑+🛹
+human|인간|n|🧑+🌍
+record|기록하다|v|📒+✏️
+grill|(불에) 굽다|v|🍖+🔥
+slice|썰다|v|🍕
+seasoning|양념|n|🧂+🌶️
+recipe|요리법|n|📖+🍳
+opportunity|기회|n|🚪+✨
+believe|믿다|v|🙏+💗
+rush|급히 움직이다/돌진하다|v|🐂+💨
+spin|빙글빙글 돌다|v|🌀+🕺
+deliver|배달하다|v|🛵+📦
+dislike|싫어하다|v|👎+😖
+angle|각도|n|📐
+encourage|격려하다|v|📣+😊
+shame|부끄러움|n|😳+🙈
+freedom|자유|n|🕊️+🌈
+danger|위험|n|⚠️
+during|~동안|f|⏳+▶️
+address|주소|n|🏠+📮
+among|~사이에|f|👥+🔍
+shore|해안|n|🏖️+🌊
+log|통나무|n|🪵+🌲
+cave|동굴|n|🦇+🪨
+spaceship|우주선|n|🛸
+submarine|잠수함|n|🚢+🫧
+tie|묶다|v|🎀+🪢
+arrange|가지런히 배열하다|v|🗂️+📏
+dig|파다|v|⛏️
+roast|(통째로) 굽다|v|🍗
+spread|펴다|v|🧈+🍞
+return|돌아오다/돌려주다|v|↩️
+respect|존중하다|v|🫡
+explain|설명하다|v|🧑‍🏫+💬
+decide|결정하다|v|✅+🤔
+choose|고르다/선택하다|v|👆+🍬
+opinion|의견|n|💬+🙋
+dew|이슬|n|💧+🍃
+lightning|번개|n|⚡
+rainfall|강우량|n|🌧️+📏
+hail|우박|n|🌨️+🧊
+frost|서리|n|❄️+🍂
+dot|점|n|⚫+🤏
+cube|정육면체|n|🎲
+horn|뿔|n|🦏
+fact|사실|n|✅+📄
+promise|약속하다|v|🤙
+prepare|준비하다|v|📝+🎒
+describe|(자세히) 묘사하다|v|🗣️+🖼️
+focus|집중하다|v|🧐+🎯
+improve|나아지다/향상되다|v|📈
+discuss|의논하다|v|💬+💬
+put off|미루다|v|⏳+📅
+get out|나가다|v|🚪+🏃
+look into|~을 자세히 조사하다|v|🔍+📂
+hang up|전화를 끊다|v|📞+👋
+match|짝이 맞다/어울리다|v|🧦+🧩
+proper|적절한|a|✅+👔
+earn|(돈을) 벌다|v|💰+💼
+fold|접다|v|📄+↩️
+degree|(온도) 도/학위|n|🌡️+🎓
+heaven|천국|n|☁️+👼
+peer|또래|n|🧒+🧒
+childhood|어린 시절|n|🧸+🧒
+exercise|운동하다|v|🏃+💪
+hell|지옥|n|😈
+toddler|유아|n|🧒+🚼
+awake|깨어있는|a|👀+☀️
+share|나눠 쓰다/나누다|v|🍪+👫
+bless|축복하다|v|🙏+🌟
+save|구하다/저장하다|v|💾
+alike|비슷한|a|👯+🟰
+protect|보호하다|v|🛡️
+allergic|알레르기가 있는|a|🤧+🥜
+half|절반|n|🌗
+greedy|욕심 많은|a|🤑
+infant|영아|n|👶+🍼
+heroine|여주인공|n|🦸‍♀️
+goddess|여신|n|✨+👸
+baggage|짐|n|🧳+🧳
+set up|설치하다|v|🔧+⛺
+get along with|잘 지내다|v|👫+🎶
+get out of|빠져나오다|v|📦+🐱
+take away|치우다/가져가 버리다|v|🤲+🗑️
+pull up|끌어올리다|v|⬆️
+site|(건물이 들어선) 장소/부지|n|🏗️+📍
+reporter|(취재) 기자/리포터|n|🎤+📰
+thief|도둑|n|🦹+💰
+comic|만화책|n|📚+💥
+navel|배꼽|n|👆+⭕
+chimney|굴뚝|n|🏠+💨
+goods|상품|n|🧸+🏷️
+object|물체|n|⚽+📦
+tunnel|터널|n|⛰️+🚂`;
+
+const POS = {n:'명사',v:'동사',a:'형용사',d:'부사',f:'기능어'};
+const WORDS = RAW.trim().split('\n').map((l,i)=>{
+  const [en,ko,p,e] = l.split('|');
+  return {id:i+1,en:en.trim(),ko:ko.trim(),pos:POS[(p||'').trim()]||'',e:(e||'✨').trim(),week:Math.floor(i/100)+1};
+});
+
+/* 주차별 주제 (리스트 그룹 내용을 바탕으로 정리) */
+const WEEKS = [
+  {ic:'👨‍👩‍👧',th:'가족 · 몸 · 숫자 · 색깔'},
+  {ic:'🏡',th:'감각 · 우리 집 · 자연'},
+  {ic:'🍰',th:'음식 · 직업 · 스포츠'},
+  {ic:'🌤️',th:'날씨 · 동물 · 기분'},
+  {ic:'🐝',th:'채소 · 장소 · 곤충'},
+  {ic:'🦒',th:'돈 · 동물 · 상상 나라'},
+  {ic:'📅',th:'순서 · 시간 · 요일'},
+  {ic:'🐙',th:'바다 동물 · 맛 · 마을'},
+  {ic:'⏰',th:'시간 표현 · 바다 · 숫자'},
+  {ic:'🧳',th:'표현 · 감정 · 여행'},
+  {ic:'🍳',th:'요리 · 자연 · 건강'},
+  {ic:'🔬',th:'과학 · 우주 · 방향'},
+  {ic:'🌍',th:'환경 · 날씨 · 문화'},
+  {ic:'🍁',th:'자연 · 성격 · 행동'},
+  {ic:'🚀',th:'요리 · 날씨 · 성장'}
+];
+const DAYS_PER_WEEK = 5, PER_DAY = 20;
+
+/* ===== 저장 ===== */
+/* config.js에 Apps Script 웹 앱 주소(API_URL)가 있으면 구글 시트에 저장하고,
+   없으면(미리보기) 이 기기 브라우저에만 저장해요. */
+/* 기본 주소: config.js가 없거나 비어 있어도 이 주소로 연결돼요 */
+const DEFAULT_API_URL = 'https://script.google.com/macros/s/AKfycbxHKF14EjLQoC15cH3ljLgoMgngjfjvCnOw_TdkMerRUb-EPt2xDi1rZ5nZHtaSBRVc/exec';
+const API_URL = String(window.WORDSKY_API_URL||DEFAULT_API_URL).trim();
+const HAS_GAS = /^https:\/\/script\.google\.com\/macros\/s\/.+\/exec/.test(API_URL);
+const SESSKEY = 'wordsky-session';
+let ME = null;      // {name, token}
+let S = {known:{},stars:{},done:{}};
+let STATS = null;
+const KIND = {card:'단어 카드',rest:'모르는 단어',pic:'그림 퀴즈',listen:'듣기 퀴즈',match:'짝 맞추기',review:'복습 퀴즈'};
+const KIND_IC = {'단어 카드':'🃏','모르는 단어':'🔁','그림 퀴즈':'🖼️','듣기 퀴즈':'🎧','짝 맞추기':'🧩','복습 퀴즈':'🏆'};
+
+function packState(){ return JSON.stringify({known:Object.keys(S.known).map(Number),stars:S.stars,done:Object.keys(S.done)}); }
+function unpackState(j){
+  const o={known:{},stars:{},done:{}};
+  try{ const p = typeof j==='string' ? JSON.parse(j||'{}') : (j||{});
+    (p.known||[]).forEach(id=>o.known[id]=1); o.stars=p.stars||{}; (p.done||[]).forEach(k=>o.done[k]=1); }catch(e){}
+  return o;
+}
+async function gas(fn,args){
+  const ctl = ('AbortController' in window) ? new AbortController() : null;
+  const timer = ctl ? setTimeout(()=>ctl.abort(),25000) : 0;
+  try{
+    /* text/plain 으로 보내야 구글이 막지 않아요 (CORS 사전 요청 없이 전송) */
+    const r = await fetch(API_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body:JSON.stringify({fn,args}),redirect:'follow',signal:ctl?ctl.signal:undefined});
+    const j = await r.json();
+    if(j && j.error) throw new Error(j.error);
+    return j ? j.data : null;
+  } finally { clearTimeout(timer); }
+}
+function api(fn,...args){
+  if(HAS_GAS) return gas(fn,args);
+  try{ return Promise.resolve(LOCAL[fn](...args)); }catch(e){ return Promise.reject(e); }
+}
+
+/* ---- 미리보기 모드용: 구글 시트 대신 이 기기에 저장 ---- */
+const LOCAL = (()=>{
+  const K='wordsky-local-db';
+  const db=()=>{ try{ return JSON.parse(localStorage.getItem(K))||{kids:{},logs:[]}; }catch(e){ return {kids:{},logs:[]}; } };
+  const put=d=>{ try{ localStorage.setItem(K,JSON.stringify(d)); }catch(e){} };
+  const h=(n,p)=>{ let x=5381; for(const c of n+'|'+p) x=((x<<5)+x+c.charCodeAt(0))|0; return String(x); };
+  const auth=(d,n,t)=>{ const k=d.kids[n]; if(!k||k.token!==t) throw new Error('다시 로그인해 주세요'); return k; };
+  const stats=(d,n)=>computeStats(d.logs.filter(l=>l.name===n).map(l=>({t:l.t,kind:l.kind})));
+  return {
+    login(name,pw,create){
+      name=String(name||'').trim().slice(0,10); pw=String(pw||'');
+      if(!name) return {ok:false,msg:'이름을 써 주세요'};
+      if(pw.length<4) return {ok:false,msg:'비밀번호는 4자 이상이에요'};
+      const d=db(); let k=d.kids[name];
+      if(!k){ if(!create) return {ok:false,needCreate:true};
+        k=d.kids[name]={hash:h(name,pw),token:Math.random().toString(36).slice(2),state:'{}'}; put(d); }
+      else if(k.hash!==h(name,pw)) return {ok:false,msg:'비밀번호가 달라요'};
+      return {ok:true,name,token:k.token,state:k.state,stats:stats(d,name)};
+    },
+    resume(name,token){ const d=db(), k=auth(d,name,token); return {ok:true,name,token,state:k.state,stats:stats(d,name)}; },
+    saveState(name,token,json){ const d=db(); auth(d,name,token).state=json; put(d); return {ok:true}; },
+    logStudy(name,token,e,json){ const d=db(); const k=auth(d,name,token); k.state=json;
+      d.logs.push({t:Date.now(),name,kind:e.kind}); put(d); return stats(d,name); }
+  };
+})();
+
+/* 공부 기록 → 오늘/7일/전체/연속 (서버의 Code.gs와 같은 규칙) */
+function ymd(d){ d=new Date(d); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function computeStats(logs){
+  const byDay={}, kinds={};
+  logs.forEach(l=>{ const k=ymd(l.t); byDay[k]=(byDay[k]||0)+1; kinds[l.kind]=(kinds[l.kind]||0)+1; });
+  const now=Date.now(), days=[]; let week=0;
+  for(let i=6;i>=0;i--){ const dt=new Date(now-i*864e5), key=ymd(dt), n=byDay[key]||0; week+=n;
+    days.push({key,label:(dt.getMonth()+1)+'/'+dt.getDate(),dow:'일월화수목금토'[dt.getDay()],n}); }
+  let streak=0, t=now; if(!byDay[ymd(t)]) t-=864e5;
+  while(byDay[ymd(t)]){ streak++; t-=864e5; }
+  return {today:byDay[ymd(now)]||0,week,total:logs.length,streak,days,kinds};
+}
+
+/* ---- 저장 상태 표시 ---- */
+let saveTimer=null, syncMode='ok';
+function setSync(m){
+  syncMode=m; const el=document.getElementById('sync'); if(!el) return;
+  el.className='uchip sync '+(m==='ok'?'':m);
+  el.textContent = m==='saving'?'☁️ 저장 중…':m==='err'?'⚠️ 저장 안 됨 · 다시':(HAS_GAS?'✅ 저장됨':'💾 이 기기');
+}
+function onApiErr(err){
+  const msg=String(err&&err.message||err);
+  if(/다시 로그인/.test(msg)){ logout('다시 로그인해 주세요'); return; }
+  setSync('err');
+}
+function cacheLocal(){ try{ if(ME) localStorage.setItem('wordsky-cache-'+ME.name,packState()); }catch(e){} }
+function save(){ cacheLocal(); clearTimeout(saveTimer); saveTimer=setTimeout(pushState,1200); }
+function pushState(){
+  if(!ME) return; setSync('saving');
+  api('saveState',ME.name,ME.token,packState()).then(()=>setSync('ok')).catch(onApiErr);
+}
+/* 공부 1번 기록 (카드 끝까지, 퀴즈·짝맞추기·복습을 마칠 때마다) */
+function record(type,key,score,total,stars){
+  if(!ME) return;
+  const m=/^w(\d+)d(\d+)/.exec(key||'')||[];
+  const entry={kind:KIND[type]||type,week:+m[1]||'',day:+m[2]||'',score:score==null?'':score,total:total==null?'':total,stars:stars==null?'':stars};
+  if(STATS){ if(!STATS.today) STATS.streak++; STATS.today++; STATS.week++; STATS.total++;
+    STATS.days[6].n++; STATS.kinds[entry.kind]=(STATS.kinds[entry.kind]||0)+1; }
+  clearTimeout(saveTimer); cacheLocal(); setSync('saving');
+  api('logStudy',ME.name,ME.token,entry,packState()).then(st=>{ if(st) STATS=st; setSync('ok'); }).catch(onApiErr);
+}
+
+/* ===== 도우미 ===== */
+const app = document.getElementById('app');
+const A = {}; // 화면별 핸들러
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]} return a; }
+function weekWords(w){ return WORDS.slice((w-1)*100, w*100); }
+function dayWords(w,d){ return weekWords(w).slice((d-1)*PER_DAY, d*PER_DAY); }
+function knownIn(list){ return list.filter(x=>S.known[x.id]).length; }
+/* 그림: '🏭+💨'처럼 두 개를 이어 붙인 그림은 나란히 작게 보여줘요 */
+function E(x){ const p=String(x.e).split('+'); return p.length>1?`<span class="duo">${p.join('')}</span>`:x.e; }
+function esc(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+function emo(el){ try{ if(window.twemoji) twemoji.parse(el,{folder:'svg',ext:'.svg'}); }catch(e){} }
+function render(html){ app.innerHTML = html; emo(app); window.scrollTo(0,0); }
+function starStr(n){ return '⭐'.repeat(n) + '☆'.repeat(3-n); }
+function getStars(k){ return S.stars[k]||0; }
+function setStars(k,n){ if(n>(S.stars[k]||0)) S.stars[k]=n; save(); }
+
+/* ===== 소리 ===== */
+let voice = null;
+function pickVoice(){
+  try{
+    const vs = speechSynthesis.getVoices();
+    voice = vs.find(v=>/en[-_]US/i.test(v.lang) && /Samantha|Google US|Aria|Jenny|Zira|Female/i.test(v.name))
+         || vs.find(v=>/en[-_]US/i.test(v.lang)) || vs.find(v=>/^en/i.test(v.lang)) || null;
+  }catch(e){}
+}
+if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged = pickVoice; }
+function say(t){
+  try{
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    u.lang='en-US'; u.rate=.78; u.pitch=1.1; if(voice) u.voice=voice;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+let ac;
+function tone(fs,dur,type){
+  try{
+    ac = ac || new (window.AudioContext||window.webkitAudioContext)();
+    const t0 = ac.currentTime;
+    fs.forEach((f,i)=>{
+      const o=ac.createOscillator(), g=ac.createGain(), t=t0+i*dur;
+      o.type=type; o.frequency.value=f;
+      g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.16,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+      o.connect(g); g.connect(ac.destination); o.start(t); o.stop(t+dur+.03);
+    });
+  }catch(e){}
+}
+const ding = ()=>tone([784,1047,1319],.09,'triangle');
+const boo  = ()=>tone([392,311],.15,'sine');
+const fanfare = ()=>tone([523,659,784,1047,1319],.11,'triangle');
+
+/* ===== 고양이 ===== */
+function cat(mood){
+  const S_ = '#5b4766', F='#ffe2b8', P='#ffb6cf';
+  let eyes, mouth;
+  if(mood==='happy'){
+    eyes = `<path d="M66 94 q12 -14 24 0" fill="none" stroke="${S_}" stroke-width="5" stroke-linecap="round"/>
+            <path d="M110 94 q12 -14 24 0" fill="none" stroke="${S_}" stroke-width="5" stroke-linecap="round"/>`;
+    mouth = `<path d="M88 112 q12 18 24 0 z" fill="#ff7fa6" stroke="${S_}" stroke-width="3" stroke-linejoin="round"/>`;
+  }else if(mood==='sad'){
+    eyes = `<g class="blink"><ellipse cx="78" cy="94" rx="8" ry="9" fill="#3d3150"/><ellipse cx="122" cy="94" rx="8" ry="9" fill="#3d3150"/>
+            <circle cx="81" cy="90" r="3" fill="#fff"/><circle cx="125" cy="90" r="3" fill="#fff"/></g>
+            <path d="M64 80 l16 4 M136 80 l-16 4" stroke="${S_}" stroke-width="3" stroke-linecap="round"/>`;
+    mouth = `<path d="M90 118 q10 -8 20 0" fill="none" stroke="${S_}" stroke-width="3" stroke-linecap="round"/>`;
+  }else{
+    eyes = `<g class="blink"><ellipse cx="78" cy="92" rx="10" ry="12" fill="#3d3150"/><ellipse cx="122" cy="92" rx="10" ry="12" fill="#3d3150"/>
+            <circle cx="82" cy="87" r="4" fill="#fff"/><circle cx="126" cy="87" r="4" fill="#fff"/>
+            <circle cx="75" cy="97" r="2" fill="#fff"/><circle cx="119" cy="97" r="2" fill="#fff"/></g>`;
+    mouth = `<path d="M100 110 q-6 9 -13 3 M100 110 q6 9 13 3" fill="none" stroke="${S_}" stroke-width="3" stroke-linecap="round"/>`;
+  }
+  return `<svg class="cat" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-label="구름냥">
+    <g class="tailw"><path d="M150 172 q38 -6 34 -44" fill="none" stroke="${S_}" stroke-width="16" stroke-linecap="round"/>
+      <path d="M150 172 q38 -6 34 -44" fill="none" stroke="${F}" stroke-width="9" stroke-linecap="round"/></g>
+    <ellipse cx="100" cy="168" rx="56" ry="28" fill="${F}" stroke="${S_}" stroke-width="4"/>
+    <ellipse cx="100" cy="172" rx="30" ry="15" fill="#fff6ea"/>
+    <path d="M38 76 L44 18 L88 50 Z" fill="${F}" stroke="${S_}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M162 76 L156 18 L112 50 Z" fill="${F}" stroke="${S_}" stroke-width="4" stroke-linejoin="round"/>
+    <path d="M50 62 L53 34 L74 50 Z" fill="${P}"/><path d="M150 62 L147 34 L126 50 Z" fill="${P}"/>
+    <ellipse cx="100" cy="98" rx="70" ry="56" fill="${F}" stroke="${S_}" stroke-width="4"/>
+    <path d="M92 46 v12 M100 44 v14 M108 46 v12" stroke="#f5b878" stroke-width="5" stroke-linecap="round"/>
+    ${eyes}
+    <ellipse cx="60" cy="112" rx="11" ry="7" fill="${P}" opacity=".8"/><ellipse cx="140" cy="112" rx="11" ry="7" fill="${P}" opacity=".8"/>
+    <path d="M94 103 h12 l-6 7 z" fill="#ff8fb0" stroke="${S_}" stroke-width="2" stroke-linejoin="round"/>
+    ${mouth}
+    <path d="M42 104 l-24 -6 M42 112 l-26 2 M158 104 l24 -6 M158 112 l26 2" stroke="${S_}" stroke-width="2.5" stroke-linecap="round"/>
+    <g class="${mood==='hi'?'paw':''}"><ellipse cx="150" cy="160" rx="15" ry="13" fill="${F}" stroke="${S_}" stroke-width="4"/>
+      <path d="M144 158 v4 M150 157 v5 M156 158 v4" stroke="${S_}" stroke-width="2" stroke-linecap="round"/></g>
+    <ellipse cx="62" cy="182" rx="14" ry="10" fill="${F}" stroke="${S_}" stroke-width="4"/>
+    <path d="M100 136 q-14 0 -18 8 h36 q-4 -8 -18 -8z" fill="#ff9cc4" stroke="${S_}" stroke-width="3"/>
+    <circle cx="100" cy="146" r="5" fill="#ffd96a" stroke="${S_}" stroke-width="2"/>
+  </svg>`;
+}
+
+/* ===== 하늘 배경 ===== */
+(function sky(){
+  const sk = document.getElementById('sky');
+  const cs = [[6,140,48,-4],[22,110,64,-30],[40,170,56,-14],[58,120,72,-48],[74,150,60,-22],[88,100,80,-60]];
+  cs.forEach(([top,w,dur,delay])=>{
+    const c=document.createElement('div'); c.className='cloud';
+    c.style.cssText=`top:${top}%;width:${w}px;animation-duration:${dur}s;animation-delay:${delay}s;opacity:${.75+Math.random()*.25}`;
+    c.innerHTML='<i></i><b></b>'; sk.appendChild(c);
+  });
+  for(let i=0;i<10;i++){
+    const s=document.createElement('div'); s.className='sparkle'; s.textContent='✦';
+    s.style.cssText=`top:${Math.random()*90}%;left:${Math.random()*95}%;animation-delay:${-Math.random()*3}s`;
+    sk.appendChild(s);
+  }
+})();
+
+function confetti(){
+  const items=['⭐','💖','☁️','🐾','🌈','✨'];
+  for(let i=0;i<28;i++){
+    const s=document.createElement('div'); s.className='cf';
+    s.textContent=items[i%items.length];
+    s.style.left=Math.random()*100+'vw';
+    s.style.animationDuration=(2+Math.random()*2)+'s';
+    s.style.animationDelay=(Math.random()*.6)+'s';
+    document.body.appendChild(s); emo(s);
+    setTimeout(()=>s.remove(),5000);
+  }
+}
+
+/* ===== 진도 ===== */
+function nextRec(){
+  for(let w=1;w<=15;w++) for(let d=1;d<=6;d++) if(!S.done[`w${w}d${d}`]) return {w,d};
+  return null;
+}
+function weekStars(w){
+  let s=0; for(let d=1;d<=6;d++) for(const m of ['pic','listen','match','review']) s+=getStars(`w${w}d${d}-${m}`);
+  return s;
+}
+function greeting(){
+  const h=new Date().getHours();
+  if(h<11) return '좋은 아침이야! ☀️';
+  if(h<17) return '안녕! 반가워 🐾';
+  if(h<21) return '오늘 하루 수고했어! 🌆';
+  return '자기 전에 살짝 볼까? 🌙';
+}
+
+/* ================= 화면: 홈 ================= */
+function home(){
+  const total = Object.keys(S.known).length;
+  const rec = nextRec();
+  const weeks = WEEKS.map((W,i)=>{
+    const w=i+1, kn=knownIn(weekWords(w)), done=S.done[`w${w}d6`];
+    return `<button class="wk ${done?'done':''}" onclick="openWeek(${w})">
+      ${done?'<span class="crown">👑</span>':''}
+      <div class="n">${w}주차</div>
+      <div class="ic">${W.ic}</div>
+      <div class="th">${W.th}</div>
+      <div class="rg">${(w-1)*100+1} ~ ${w*100}번 · ⭐ ${weekStars(w)}</div>
+      <div class="bar"><i style="width:${kn}%"></i></div>
+    </button>`;
+  }).join('');
+
+  const nm=esc(ME.name);
+  render(`
+  <div class="userbar"><span class="uchip">🐾 ${nm}</span><span class="uchip sync" id="sync"></span><button class="uchip" onclick="logout()">로그아웃</button></div>
+  <section class="hero">
+    <div class="catwrap">${cat('hi')}</div>
+    <div class="bubble">${greeting()}<br>${callName(ME.name)} 나는 <b style="font-weight:400;color:#ff7fab">구름냥</b>이야.<br>오늘도 같이 단어 놀이 하자냥!</div>
+  </section>
+  <h1 class="title"><span class="who">${nm}</span>의 단어 연습장</h1>
+  <div class="subtitle">필수 영어 단어 1,500 · 15주 여행</div>
+
+  ${rec ? `<section class="panel today">
+      <div class="ic">${rec.d<=5?'🎯':'🏆'}</div>
+      <div class="tx"><span class="muted">오늘의 추천</span>
+        <b>${rec.w}주차 · ${rec.d<=5?`Day ${rec.d} (새 단어 20개)`:'Day 6 복습 퀴즈'}</b>
+        ${rec.d<=5?WEEKS[rec.w-1].th:'이번 주 100단어 총정리!'}</div>
+      <button class="btn" onclick="${rec.d<=5?`openDay(${rec.w},${rec.d})`:`startReview(${rec.w})`}">시작!</button>
+    </section>`
+  : `<section class="panel today"><div class="ic">🎓</div><div class="tx"><b>1,500단어 여행 완주!</b>정말 대단해! 원하는 주차를 골라 다시 복습해 봐요.</div></section>`}
+
+  ${statsPanel()}
+
+  <section class="panel">
+    <div class="stat"><span>🐾 내가 아는 단어</span><span><b style="font-weight:400;color:#ff7fab">${total}</b> / 1,500</span></div>
+    <div class="bar"><i style="width:${total/15}%"></i></div>
+  </section>
+
+  <section class="panel">
+    <div style="font-size:18px">📚 이렇게 공부해요</div>
+    <div class="plan">
+      <div><b>20개</b>하루 새 단어</div>
+      <div><b>5일+1</b>배우기 + 복습</div>
+      <div><b>15주</b>약 3개월 반</div>
+    </div>
+    <div class="plan-note">
+      · 월~금은 하루 20단어씩: <b style="font-weight:400">카드로 익히고 → 그림 퀴즈 → 듣기 퀴즈 → 짝 맞추기</b><br>
+      · 6일째는 그 주 100단어 복습 퀴즈, 7일째는 푹 쉬어요.<br>
+      · 보카 테스트 결과가 있다면 아는 지점 다음 주차부터 시작해도 좋아요 (예: 450개 → 5주차).<br>
+      · 아이가 알면 카드에서 <b style="font-weight:400">“알아요!”</b> → 단어장에 O가 쌓여요.
+    </div>
+  </section>
+
+  <h2>☁️ 주차별 단어 구름섬</h2>
+  <div class="weeks">${weeks}</div>
+
+  <div class="foot">
+    단어 순서는 '현서네 영어 · 필수 영어 단어 1,500' 리스트를 따릅니다.<br>
+    ${HAS_GAS?'공부 기록은 구글 시트에 저장돼요.':'지금은 미리보기 모드라 이 기기에만 저장돼요.'}
+  </div>`);
+  setSync(syncMode);
+}
+/* 이름 부르기: 은하 → 은하야!, 지민 → 지민아! */
+function callName(n){
+  const c=n.charCodeAt(n.length-1);
+  if(c>=0xAC00 && c<=0xD7A3) return esc(n)+((c-0xAC00)%28?'아!':'야!');
+  return esc(n)+'!';
+}
+function statsPanel(){
+  const st=STATS||{today:0,week:0,total:0,streak:0,days:[],kinds:{}};
+  const max=Math.max(1,...st.days.map(d=>d.n));
+  const bars=st.days.map((d,i)=>`<div class="c ${i===st.days.length-1?'today':''}">
+      <span class="n">${d.n||''}</span><i class="bb" style="height:${d.n?Math.max(8,d.n/max*80):4}px"></i>
+      <span class="d">${i===st.days.length-1?'오늘':d.dow}</span></div>`).join('');
+  const kinds=Object.keys(KIND_IC).filter(k=>st.kinds[k]).map(k=>`<span class="chip">${KIND_IC[k]} ${k} ${st.kinds[k]}번</span>`).join('');
+  return `<section class="panel">
+    <div style="font-size:18px">📊 ${esc(ME.name)}의 공부 기록</div>
+    <div class="plan st">
+      <div><b>${st.today}번</b>오늘</div>
+      <div><b>${st.week}번</b>최근 7일</div>
+      <div><b>${st.total}번</b>지금까지</div>
+    </div>
+    <div class="streak">${st.streak?`🔥 <b style="font-weight:400;color:#ff7fab">${st.streak}일</b> 연속 공부 중!`:'오늘 첫 공부를 시작해 볼까? ✨'}</div>
+    ${st.days.length?`<div class="week7">${bars}</div>`:''}
+    ${kinds?`<div class="kinds">${kinds}</div>`:''}
+  </section>`;
+}
+
+/* ================= 화면: 주차 ================= */
+function openWeek(w){
+  const W=WEEKS[w-1], ww=weekWords(w);
+  let days='';
+  for(let d=1;d<=DAYS_PER_WEEK;d++){
+    const list=dayWords(w,d), done=S.done[`w${w}d${d}`];
+    days+=`<button class="day ${done?'done':''}" onclick="openDay(${w},${d})">
+      <div class="dn">Day ${d}</div>
+      <div class="dr">${list[0].id} ~ ${list[list.length-1].id}번</div>
+      <div class="pv">${list.slice(0,4).map(x=>E(x)).join('')}</div>
+      <div class="ck">${done?'✅ 완료 · ':''}아는 단어 ${knownIn(list)}/${list.length}</div>
+    </button>`;
+  }
+  const rv=S.done[`w${w}d6`], unk=ww.filter(x=>!S.known[x.id]).length;
+  days+=`<button class="day review ${rv?'done':''}" onclick="startReview(${w})">
+      <div class="dn">Day 6 · 복습</div><div class="dr">100단어 중 20문제</div>
+      <div class="pv">🏆📝</div><div class="ck">${rv?'✅ 완료 · ':''}${starStr(getStars(`w${w}d6-review`))}</div></button>
+    <button class="day rest" onclick="restCards(${w})">
+      <div class="dn">Day 7 · 쉬는 날</div><div class="dr">쉬고 싶으면 쉬어요!</div>
+      <div class="pv">😴🛌</div><div class="ck" style="color:#c25a86">아직 모르는 단어 ${unk}개 다시 보기</div></button>`;
+
+  render(`
+  <div class="topbar"><button class="back" onclick="home()">◀ 홈</button><div class="t">${W.ic} ${w}주차</div><div class="r">${knownIn(ww)}/100</div></div>
+  <section class="panel" style="display:flex;align-items:center;gap:12px">
+    <div style="width:84px;flex:none">${cat('happy')}</div>
+    <div style="flex:1;line-height:1.5"><span class="muted">이번 주 주제</span><br><span style="font-size:20px">${W.th}</span><br>
+      <span class="muted" style="font-size:14px">${(w-1)*100+1}~${w*100}번 · 하루 20단어씩 차근차근!</span></div>
+  </section>
+  <div class="days">${days}</div>
+  <div style="text-align:center;margin-top:18px"><button class="btn white" onclick="wordList(${w})">📋 이번 주 단어장 (O 체크)</button></div>`);
+}
+
+/* ================= 화면: 하루 ================= */
+function openDay(w,d){
+  const list=dayWords(w,d), k=`w${w}d${d}`;
+  render(`
+  <div class="topbar"><button class="back" onclick="openWeek(${w})">◀ ${w}주차</button><div class="t">Day ${d}</div><div class="r">${knownIn(list)}/${list.length}</div></div>
+  <div class="modes">
+    <button class="mode m1" onclick="cards(${w},${d})"><div class="ic">🃏</div><div class="mt">단어 카드</div><div class="md">톡 뒤집어서 뜻 보기</div><div class="st">${S.done[k]?'✅ 학습함':'먼저 해봐요!'}</div></button>
+    <button class="mode m2" onclick="quiz(${w},${d},'pic')"><div class="ic">🖼️</div><div class="mt">그림 퀴즈</div><div class="md">그림 보고 영어 고르기</div><div class="st">${starStr(getStars(k+'-pic'))}</div></button>
+    <button class="mode m3" onclick="quiz(${w},${d},'listen')"><div class="ic">🎧</div><div class="mt">듣기 퀴즈</div><div class="md">듣고 그림 고르기</div><div class="st">${starStr(getStars(k+'-listen'))}</div></button>
+    <button class="mode m4" onclick="match(${w},${d})"><div class="ic">🧩</div><div class="mt">짝 맞추기</div><div class="md">영어 ↔ 그림 연결</div><div class="st">${starStr(getStars(k+'-match'))}</div></button>
+  </div>
+  <h2>오늘의 단어 ${list.length}개</h2>
+  <div class="chips">${list.map(x=>`<span class="chip ${S.known[x.id]?'k':''}">${E(x)} <span class="en">${esc(x.en)}</span></span>`).join('')}</div>`);
+}
+
+/* ================= 플래시 카드 ================= */
+function cards(w,d,customList,title,backFn){
+  const list = customList || dayWords(w,d);
+  const back = backFn || (()=>openDay(w,d));
+  if(!list.length){ alert('모든 단어를 알고 있어요! 대단해요 🎉'); return back(); }
+  let i=0, flipped=false;
+  function draw(){
+    const x=list[i];
+    const dots=list.map((y,j)=>`<i class="${j===i?'on':S.known[y.id]?'k':''}"></i>`).join('');
+    render(`
+    <div class="topbar"><button class="back" id="bk">◀ 나가기</button><div class="t">${title||`${w}주차 · Day ${d} 카드`}</div><div class="r">${i+1} / ${list.length}</div></div>
+    <div class="dots">${dots}</div>
+    <div class="flipbox ${flipped?'on':''}" id="fb">
+      <div class="flipin">
+        <div class="face f"><div class="pic">${E(x)}</div><div class="word en ${x.en.length>10?'long':''}">${esc(x.en)}</div><div class="hint">👆 톡! 눌러서 뜻 보기</div></div>
+        <div class="face b"><div class="pic sm">${E(x)}</div><div class="ko">${esc(x.ko)}</div><div class="pos">${x.pos}</div><div class="small-en en">${esc(x.en)}</div></div>
+      </div>
+    </div>
+    <div class="ctrl">
+      <button class="round" id="pv">◀</button>
+      <button class="btn blue" id="sp">🔊 듣기</button>
+      <button class="round" id="nx">▶</button>
+    </div>
+    <div class="ctrl">
+      <button class="btn white" id="no">😿 아직 몰라요</button>
+      <button class="btn mint" id="ok">😺 알아요!</button>
+    </div>
+    <div style="text-align:center;font-size:14px" class="muted">${S.known[x.id]?'<span class="kbadge">✔ 아는 단어</span>':'카드를 누르면 뒤집혀요 · 옆으로 밀어도 넘어가요'}</div>`);
+    const fb=document.getElementById('fb');
+    fb.onclick=()=>{ flipped=!flipped; fb.classList.toggle('on',flipped); if(flipped) say(x.en); };
+    document.getElementById('bk').onclick=back;
+    document.getElementById('sp').onclick=()=>say(x.en);
+    document.getElementById('pv').onclick=()=>go(-1);
+    document.getElementById('nx').onclick=()=>go(1);
+    document.getElementById('ok').onclick=()=>{ S.known[x.id]=1; save(); ding(); go(1); };
+    document.getElementById('no').onclick=()=>{ delete S.known[x.id]; save(); go(1); };
+    let sx=null;
+    fb.addEventListener('touchstart',e=>{sx=e.touches[0].clientX},{passive:true});
+    fb.addEventListener('touchend',e=>{ if(sx==null) return; const dx=e.changedTouches[0].clientX-sx; if(Math.abs(dx)>60){ e.preventDefault(); go(dx<0?1:-1);} sx=null; });
+    setTimeout(()=>say(x.en),250);
+  }
+  function go(step){
+    if(i+step>=list.length){ return finish(); }
+    i=Math.max(0,i+step); flipped=false; draw();
+  }
+  function finish(){
+    if(!customList){ S.done[`w${w}d${d}`]=1; }
+    record(customList?'rest':'card',`w${w}d${customList?7:d}`,knownIn(list),list.length,'');
+    fanfare(); confetti();
+    render(`<div class="panel result">
+      <div class="catwrap">${cat('happy')}</div>
+      <h3>카드 학습 완료!</h3>
+      <p class="muted">${list.length}개 중 <b style="font-weight:400;color:#2e8f6c">${knownIn(list)}개</b>를 알고 있어요.<br>이제 퀴즈로 확인해 볼까냥?</p>
+      <div class="ctrl">${customList?'':`<button class="btn" onclick="quiz(${w},${d},'pic')">🖼️ 그림 퀴즈 하러 가기</button>`}
+      <button class="btn white" id="bk2">돌아가기</button></div></div>`);
+    document.getElementById('bk2').onclick=back;
+  }
+  draw();
+}
+function restCards(w){
+  const list=weekWords(w).filter(x=>!S.known[x.id]);
+  cards(w,0,list,`${w}주차 · 모르는 단어`,()=>openWeek(w));
+}
+
+/* ================= 퀴즈 ================= */
+function distractors(q,k){
+  let pool=weekWords(q.week).filter(x=>x.id!==q.id && x.en!==q.en && x.ko!==q.ko && x.e!==q.e);
+  if(pool.length<k) pool=WORDS.filter(x=>x.id!==q.id && x.ko!==q.ko);
+  /* 그림이 서로 겹치지 않게 고르기 (듣기 퀴즈에서 그림만 보고 고를 수 있도록) */
+  const seen=new Set([q.e]), out=[];
+  for(const x of shuffle(pool)){ if(!seen.has(x.e)){ seen.add(x.e); out.push(x); if(out.length===k) break; } }
+  return out;
+}
+function quiz(w,d,mode){ runQuiz(dayWords(w,d),mode,`w${w}d${d}-${mode}`,10,()=>openDay(w,d),
+  mode==='pic'?`Day ${d} 그림 퀴즈`:`Day ${d} 듣기 퀴즈`, ()=>{S.done[`w${w}d${d}`]=1;}); }
+function startReview(w){ runQuiz(weekWords(w),'mix',`w${w}d6-review`,20,()=>openWeek(w),`${w}주차 복습 퀴즈`,()=>{S.done[`w${w}d6`]=1;}); }
+
+function runQuiz(list,mode,key,n,back,title,onDone){
+  const qs=shuffle(list).slice(0,Math.min(n,list.length));
+  let i=0, score=0; const wrong=[];
+  function draw(){
+    const q=qs[i], m = mode==='mix' ? (i%2?'listen':'pic') : mode;
+    const opts=shuffle([q,...distractors(q,3)]);
+    const top = m==='pic'
+      ? `<div class="qprompt">이 그림은 영어로 뭘까?</div><div class="pic qpic">${E(q)}</div>`
+      : `<div class="qprompt">잘 듣고 알맞은 그림을 골라요!</div><button class="speakbig" id="sp">🔊</button><div class="muted" style="font-size:18px">버튼을 누르면 다시 들려요</div>`;
+    const choices = opts.map(o=> m==='pic'
+      ? `<button class="ch ${o.en.length>8?'long':''}" data-id="${o.id}"><span class="en">${esc(o.en)}</span></button>`
+      : `<button class="ch picch" data-id="${o.id}" aria-label="${esc(o.ko)}"><span class="e">${E(o)}</span></button>`).join('');
+    render(`
+    <div class="topbar"><button class="back" id="bk">◀ 나가기</button><div class="t">${title}</div><div class="r">${i+1} / ${qs.length}</div></div>
+    <div class="qhead"><div class="minicat" id="mc">${cat('hi')}</div><div class="bar"><i style="width:${i/qs.length*100}%"></i></div><div class="score">⭐ ${score}</div></div>
+    <div class="qcard">${top}</div>
+    <div class="choices">${choices}</div>`);
+    document.getElementById('bk').onclick=back;
+    if(m==='listen'){ document.getElementById('sp').onclick=()=>say(q.en); setTimeout(()=>say(q.en),300); }
+    app.querySelectorAll('.ch').forEach(b=>b.onclick=()=>pick(b,q));
+  }
+  function pick(b,q){
+    const ok = +b.dataset.id===q.id;
+    app.querySelectorAll('.ch').forEach(x=>{ x.disabled=true; if(+x.dataset.id===q.id) x.classList.add('right'); });
+    const mc=document.getElementById('mc');
+    if(ok){ score++; ding(); b.classList.add('right'); }
+    else { boo(); b.classList.add('wrong'); wrong.push(q); }
+    mc.innerHTML=cat(ok?'happy':'sad'); mc.classList.add('hop');
+    say(q.en);
+    setTimeout(()=>{ i++; i<qs.length?draw():finish(); }, ok?1000:1700);
+  }
+  function finish(){
+    const pct=score/qs.length, st=pct>=.9?3:pct>=.7?2:pct>=.4?1:0;
+    if(st>(S.stars[key]||0)) S.stars[key]=st; if(onDone) onDone();
+    record(key.split('-')[1],key,score,qs.length,st);
+    if(st>=2){ fanfare(); confetti(); }
+    const msg = st===3?'완벽해! 최고야!':st===2?'아주 잘했어!':st===1?'좋아, 조금만 더!':'괜찮아, 다시 해보자냥!';
+    render(`<div class="panel result">
+      <div class="catwrap">${cat(st>=1?'happy':'sad')}</div>
+      <div class="stars">${starStr(st)}</div>
+      <h3>${msg}</h3>
+      <p class="muted">${qs.length}문제 중 ${score}개 정답</p>
+      ${wrong.length?`<div class="wrongs"><div style="font-size:17px">🔁 다시 볼 단어</div>
+        ${wrong.map(x=>`<div class="wl" onclick="say('${x.en.replace(/'/g,"\\'")}')"><span class="e">${E(x)}</span><div><div class="en">${esc(x.en)} 🔊</div><div class="k">${esc(x.ko)}</div></div></div>`).join('')}</div>`:''}
+      <div class="ctrl" style="margin-top:16px"><button class="btn" id="re">다시 하기</button><button class="btn white" id="bk2">돌아가기</button></div></div>`);
+    document.getElementById('re').onclick=()=>runQuiz(list,mode,key,n,back,title,onDone);
+    document.getElementById('bk2').onclick=back;
+  }
+  draw();
+}
+
+/* ================= 짝 맞추기 ================= */
+function match(w,d){
+  const back=()=>openDay(w,d), key=`w${w}d${d}-match`;
+  /* 그림이 서로 다른 단어 6개 고르기 (한글 없이 그림만으로 짝을 찾을 수 있도록) */
+  const seen=new Set(), set=[];
+  for(const x of shuffle(dayWords(w,d))){ if(!seen.has(x.e)){ seen.add(x.e); set.push(x); if(set.length===6) break; } }
+  const tiles=shuffle([...set.map(x=>({x,t:'en'})),...set.map(x=>({x,t:'pic'}))]);
+  let sel=null, got=0, miss=0;
+  render(`
+  <div class="topbar"><button class="back" id="bk">◀ 나가기</button><div class="t">짝 맞추기</div><div class="r" id="mm">0 / 6</div></div>
+  <div class="qhead"><div class="minicat" id="mc">${cat('hi')}</div><div class="muted" style="flex:1;font-size:15px">영어 단어와 그림을 하나씩 눌러서 짝을 지어 줘!</div></div>
+  <div class="mgrid">${tiles.map((o,i)=>`<button class="tile" data-i="${i}">${o.t==='en'
+      ? `<span class="en">${esc(o.x.en)}</span>`
+      : `<span class="e">${E(o.x)}</span>`}</button>`).join('')}</div>`);
+  document.getElementById('bk').onclick=back;
+  const els=[...app.querySelectorAll('.tile')];
+  fitTiles(); setTimeout(fitTiles,600);
+  if(document.fonts&&document.fonts.ready) document.fonts.ready.then(fitTiles);
+  els.forEach(el=>el.onclick=()=>{
+    const o=tiles[+el.dataset.i];
+    if(el.classList.contains('ok')) return;
+    if(o.t==='en') say(o.x.en);
+    if(sel===null || tiles[sel].t===o.t){ if(sel!==null) els[sel].classList.remove('sel'); sel=+el.dataset.i; el.classList.add('sel'); return; }
+    const a=els[sel], ao=tiles[sel]; sel=null; a.classList.remove('sel');
+    const mc=document.getElementById('mc');
+    if(ao.x.id===o.x.id){
+      a.classList.add('ok'); el.classList.add('ok'); got++; ding(); say(o.x.en);
+      mc.innerHTML=cat('happy');
+      document.getElementById('mm').textContent=`${got} / 6`;
+      if(got===6) setTimeout(()=>{
+        const st=miss<=1?3:miss<=4?2:1; if(st>(S.stars[key]||0)) S.stars[key]=st; S.done[`w${w}d${d}`]=1;
+        record('match',key,6,6+miss,st); fanfare(); confetti();
+        render(`<div class="panel result"><div class="catwrap">${cat('happy')}</div><div class="stars">${starStr(st)}</div>
+          <h3>짝을 모두 찾았어!</h3><p class="muted">틀린 횟수 ${miss}번</p>
+          <div class="ctrl"><button class="btn" onclick="match(${w},${d})">다른 단어로 또 하기</button><button class="btn white" onclick="openDay(${w},${d})">돌아가기</button></div></div>`);
+      },700);
+    }else{
+      miss++; boo(); mc.innerHTML=cat('sad');
+      [a,el].forEach(t=>{ t.classList.add('no'); setTimeout(()=>t.classList.remove('no'),420); });
+    }
+  });
+}
+
+/* 영어 단어가 칸 안에 한 줄로 쏙 들어가도록 글자 크기 자동 조절 */
+function fitTiles(){
+  app.querySelectorAll('.tile .en').forEach(s=>{
+    s.style.fontSize='';
+    const max=s.parentElement.clientWidth-14;
+    let fs=parseFloat(getComputedStyle(s).fontSize);
+    while((s.scrollWidth>max || s.offsetHeight>fs*1.2*2+2) && fs>12){ fs-=1; s.style.fontSize=fs+'px'; }
+  });
+}
+window.addEventListener('resize',()=>{ if(app.querySelector('.mgrid')) fitTiles(); });
+
+/* ================= 단어장 ================= */
+function wordList(w){
+  const ww=weekWords(w);
+  render(`
+  <div class="topbar"><button class="back" onclick="openWeek(${w})">◀ ${w}주차</button><div class="t">📋 ${w}주차 단어장</div><div class="r" id="cnt">${knownIn(ww)}/100</div></div>
+  <p class="muted" style="font-size:14px;margin:0 4px">영어 단어를 누르면 발음이 나와요. 아는 단어는 오른쪽 동그라미를 눌러 O 표시!</p>
+  <table class="wt">${ww.map(x=>`<tr>
+    <td>${x.id}</td><td class="e">${E(x)}</td>
+    <td><span class="en" data-say="${esc(x.en)}">${esc(x.en)}</span><br><span class="p">${x.pos}</span></td>
+    <td>${esc(x.ko)}</td>
+    <td><button class="okbtn ${S.known[x.id]?'on':''}" data-id="${x.id}">O</button></td></tr>`).join('')}</table>`);
+  app.querySelectorAll('[data-say]').forEach(el=>el.onclick=()=>say(el.dataset.say));
+  app.querySelectorAll('.okbtn').forEach(b=>b.onclick=()=>{
+    const id=+b.dataset.id;
+    if(S.known[id]) delete S.known[id]; else { S.known[id]=1; ding(); }
+    b.classList.toggle('on',!!S.known[id]); save();
+    document.getElementById('cnt').textContent=`${knownIn(ww)}/100`;
+  });
+}
+
+/* ================= 로그인 ================= */
+function showLogin(msg){
+  ME=null;
+  render(`<div class="login">
+    <div class="catwrap">${cat('hi')}</div>
+    <h1 class="title">단어 연습장</h1>
+    <div class="subtitle">아이 이름과 비밀번호로 들어와요</div>
+    <section class="panel">
+      <form class="lform" id="lf" autocomplete="on" onsubmit="return false">
+        <label for="ln">👧 아이 이름</label>
+        <input id="ln" maxlength="10" autocomplete="username" placeholder="예) 은하">
+        <label for="lp">🔒 비밀번호</label>
+        <input id="lp" type="password" autocomplete="current-password" placeholder="4자 이상">
+        <div id="newbox" hidden style="display:grid;gap:8px">
+          <div class="lnote" id="newmsg"></div>
+          <label for="lp2">🔒 비밀번호 한 번 더</label>
+          <input id="lp2" type="password" autocomplete="new-password" placeholder="같은 비밀번호">
+        </div>
+        <button class="btn" id="lgo">들어가기</button>
+        <button class="btn white" id="lcancel" hidden>다른 이름으로 할래요</button>
+        <div class="lmsg" id="lmsg">${msg?esc(msg):''}</div>
+      </form>
+    </section>
+    ${HAS_GAS?'':'<div class="preview">지금은 <b style="font-weight:400">미리보기 모드</b>예요. 기록이 이 기기에만 저장돼요.<br>구글 시트에 저장하려면 config.js에 Apps Script 주소를 넣어 주세요.</div>'}
+  </div>`);
+  const nb=document.getElementById('newbox'), go=document.getElementById('lgo'), cc=document.getElementById('lcancel'), lm=document.getElementById('lmsg');
+  let creating=false;
+  nb.style.display='none';
+  cc.style.display='none';
+  const setCreate=on=>{ creating=on; nb.hidden=!on; nb.style.display=on?'grid':'none'; cc.hidden=!on; cc.style.display=on?'':'none';
+    go.textContent=on?'새로 만들고 들어가기':'들어가기'; if(on) document.getElementById('lp2').focus(); };
+  cc.onclick=()=>{ setCreate(false); lm.textContent=''; document.getElementById('ln').focus(); };
+  document.getElementById('ln').oninput=()=>{ if(creating) setCreate(false); };
+  go.onclick=async()=>{
+    const n=document.getElementById('ln').value.trim(), p=document.getElementById('lp').value;
+    if(!n){ lm.textContent='이름을 써 주세요'; return; }
+    if(p.length<4){ lm.textContent='비밀번호는 4자 이상이에요'; return; }
+    if(creating && p!==document.getElementById('lp2').value){ lm.textContent='비밀번호가 서로 달라요'; return; }
+    go.disabled=true; lm.textContent='☁️ 확인하는 중…';
+    try{
+      const r=await api('login',n,p,creating);
+      go.disabled=false;
+      if(r.ok) return enter(r);
+      if(r.needCreate){ lm.textContent=''; document.getElementById('newmsg').innerHTML=`<b style="font-weight:400">'${esc(n)}'</b>는 처음 보는 이름이에요.<br>이 이름과 비밀번호로 새로 만들까요?`; setCreate(true); return; }
+      lm.textContent=r.msg||'다시 해 볼까요?';
+    }catch(e){ go.disabled=false; lm.textContent='연결이 잠깐 안 됐어요. 다시 눌러 주세요.'; }
+  };
+  ['ln','lp','lp2'].forEach(id=>document.getElementById(id).addEventListener('keydown',e=>{ if(e.key==='Enter'){ e.preventDefault(); go.click(); } }));
+  document.getElementById('ln').focus();
+}
+function enter(r){
+  ME={name:r.name,token:r.token};
+  S=unpackState(r.state); STATS=r.stats||null; syncMode='ok';
+  try{ localStorage.setItem(SESSKEY,JSON.stringify(ME)); }catch(e){}
+  document.title=r.name+'의 단어 연습장';
+  home();
+}
+function logout(msg){
+  if(!msg && !confirm('로그아웃할까요?')) return;
+  clearTimeout(saveTimer);
+  try{ localStorage.removeItem(SESSKEY); }catch(e){}
+  document.title='단어 연습장';
+  showLogin(msg||'');
+}
+async function boot(){
+  let sess=null; try{ sess=JSON.parse(localStorage.getItem(SESSKEY)||'null'); }catch(e){}
+  if(sess && sess.name && sess.token){
+    render(`<div class="login"><div class="catwrap">${cat('hi')}</div><h1 class="title">단어 연습장</h1><div class="subtitle">☁️ ${esc(sess.name)}의 기록을 불러오는 중…</div></div>`);
+    try{ const r=await api('resume',sess.name,sess.token); if(r && r.ok) return enter(r); }
+    catch(e){ const m=String(e&&e.message||e); return showLogin(/다시 로그인/.test(m)?'':'연결이 잠깐 안 됐어요. 다시 들어와 주세요.'); }
+  }
+  showLogin();
+}
+boot();
+</script>
+</body>
+</html>
